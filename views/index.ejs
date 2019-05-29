@@ -1,0 +1,100 @@
+<% include _layouts/header %>
+
+<div class="row">
+    <div class="col-sm-7" id="check">
+        <div class="card bg-light">
+            <h5 class="card-header">Поточне замовлення</h5>
+            <div class="card-body">
+                <table class="table table-hover table-borderless table-striped">
+                    <thead>
+                        <tr style="font-size: 0.7em;">
+                            <th>Назва</th>
+                            <th>Кількість</th>
+                            <th>Вартість</th>
+                            <th>Сума</th>
+                            <th>Дія</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td scope="row">Опілля Корифей</td>
+                            <td>2.0</td>
+                            <td>2.0</td>
+                            <td>2.0</td>
+                            <td><button type="button" class="btn btn-outline-danger btn-sm">Видалити</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer text-center">
+                <a href="#" class="btn btn-danger btn-sm">Очистити</a>
+                <a href="#" class="btn btn-success btn-sm">Зберегти</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-5">
+        <div class="row">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="" id="search">
+
+                <div class="input-group-append">
+                    <span class="input-group-text" id="basic-addon1">Назва</span>
+                </div>
+
+            </div>
+        </div>
+        <table class="table table-hover table-borderless table-striped">
+            <thead>
+                <tr style="font-size: 0.7em;">
+                    <th>Назва</th>
+                    <th>Вартість</th>
+                    <th>Залишок</th>
+                    <th>Дія</th>
+                </tr>
+            </thead>
+            <tbody id="products_table">
+                <% products.forEach(function(p){ %>
+                <tr class="content">
+                    <td scope="row"><%= p.title %></td>
+                    <td><%= p.price %></td>
+                    <td><%= p.quantity %></td>
+                    <td><button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal"
+                            data-target="#exampleModal" data-whatever="<%= p.title %>">Додати</button></td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Вкажіть кількість для</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon3">Кількість:</span>
+                            </div>
+                            <input type="number" class="form-control" id="quantity" step="0.001" min="0">
+                            <div class="input-group-append">
+                                    <span class="input-group-text">кг</span>
+                                  </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Додати</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% include _layouts/footer %>
