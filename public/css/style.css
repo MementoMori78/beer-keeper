@@ -93,3 +93,8 @@ table.alignmiddle td {
  th {
      padding: 6px;
  }
+
+ #totalCost {
+     font-weight: bolder;
+     font-size: 1.2em;
+ }

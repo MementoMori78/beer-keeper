@@ -32,26 +32,8 @@ app.locals.errors = null;
 // Get Page Model
 var Page = require('./models/page');
 
-// Get all pages to pass to header.ejs
-Page.find({}).sort({sorting: 1}).exec(function (err, pages) {
-    if (err) {
-        console.log(err);
-    } else {
-        app.locals.pages = pages;
-    }
-});
 
-// Get Category Model
-var Category = require('./models/category');
 
-// Get all categories to pass to header.ejs
-Category.find(function (err, categories) {
-    if (err) {
-        console.log(err);
-    } else {
-        app.locals.categories = categories;
-    }
-});
 
 // Express fileUpload middleware
 app.use(fileUpload());
@@ -120,6 +102,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('*', function(req,res,next) {
+    //creating order object if it wasnt defined
+    if (typeof req.session.currentOrder === "undefined") {
+        req.session.currentOrder = {
+            products: [],
+            sum: 0
+        };
+    }
    res.locals.cart = req.session.cart;
    res.locals.user = req.user || null;
    next();
