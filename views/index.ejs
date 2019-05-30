@@ -59,7 +59,7 @@
                     <td><%= p.price %></td>
                     <td><%= p.quantity %></td>
                     <td><button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal"
-                            data-target="#exampleModal" data-whatever="<%= p.title %>">Додати</button></td>
+                            data-target="#exampleModal" data-whatever="<%= p.title %>" data-id="<%= p._id%>">Додати</button></td>
                 </tr>
                 <% }); %>
             </tbody>
@@ -76,20 +76,21 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form id="add_product_form" method="post" action="/">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon3">Кількість:</span>
                             </div>
-                            <input type="number" class="form-control" id="quantity" step="0.001" min="0">
+                            <input type="number" class="form-control" id="quantity" step="0.001" min="0" name="quantity">
                             <div class="input-group-append">
                                     <span class="input-group-text">кг</span>
-                                  </div>
+                            </div>
                         </div>
+                        <input type="string" id="_id" style="display: none;" name="id">
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Додати</button>
+                    <button type="submit" form="add_product_form" class="btn btn-primary">Додати</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
                 </div>
             </div>

@@ -22,6 +22,24 @@ router.get('/', function (req, res) {
     });
 });
 
+
+/*
+ * POST /
+ */
+router.post('/', function (req, res) {
+    console.log(`POST / params: id=${req.body.id} quantity=${req.body.quantity}`);
+    Product.find({}, (err, products) => {
+        if(err) {
+            console.log(error);
+            res.render('index', { products: []})
+        } else {
+            res.render('index', {
+                products: products
+            })
+        }
+    });
+});
+
 /*
  * GET a page
  */
