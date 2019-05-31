@@ -30,7 +30,7 @@ router.get('/', function (req, res) {
 });
 
 router.get('/del_product', function (req, res) {
-    console.log(`GET [/del] params: id=${req.query.id} [${typeof req.query.id}] quantity=${req.query.quantity} [${typeof req.query.quantity}]`);
+    console.log(`GET [/del] params: id=${req.query.id} quantity=${req.query.quantity} `);
     let _index;
     req.session.currentOrder.products.forEach((element, index) => {
         if (element._id == req.query.id && element.quantity == req.query.quantity) {
@@ -59,18 +59,23 @@ router.post('/', function (req, res) {
         //Adding Bottles to order if type of the product is beer  
         if (product.category == "Пиво") {
             let bottleName = 'Пляшка ';
-            let addStr = '0.5';
-            if(parseFloat(quantity) == 0.5){
-                addStr = '0.5';
-            }
-            if(parseFloat(quantity) == 1.0){
-                addStr = '1.0';
-            }
-            if(parseFloat(quantity) == 1.5){
-                addStr = '1.5';
-            }
-            if(parseFloat(quantity) == 2.0){
-                addStr = '2.0';
+            let addStr;
+            switch (parseFloat(quantity)) {
+                case 0.5:
+                    addStr = '0.5';
+                    break;
+                case 1.0:
+                    addStr = '1.0';
+                    break;
+                case 1.5:
+                    addStr = '1.5';
+                    break;
+                case 2.0:
+                    addStr = '2.0';
+                    break;
+                default:
+                    addStr = '0.5';
+                    break;
             }
             bottleName += addStr;
             Product.findOne({ title: bottleName }, (err, p) => {
@@ -92,10 +97,10 @@ router.post('/', function (req, res) {
                 //updating total sum
                 req.session.currentOrder.sum += p.price;
                 req.session.currentOrder.sum += parseFloat(product.price) * parseFloat(quantity);
-                console.log(req.session.currentOrder);
                 res.redirect('/');
             });
         } else {
+            //adding product
             req.session.currentOrder.products.push({
                 name: product.title,
                 price: product.price,
