@@ -13,11 +13,20 @@
     <div class="nav container align-middle">
         <div class="row">
             <ul class="nav">
-                <li class="nav-item active">
-                    <a class="nav-link active" href="/">Касир</a>
+                <li class="nav-item <%= navClasses['cas']%>">
+                    <a class="nav-link >" href="/">Касир</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Склад</a>
+                
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle <%= navClasses['storage']%>" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Склад
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="/checks">Чеки</a>
+                        <a class="dropdown-item" href="/balance">Баланс товару</a>
+                        <a class="dropdown-item" href="#">Додати новий товар</a>
+                        <a class="dropdown-item" href="#">Створити категорію</a>
+                    </div>
                 </li>
             </ul>
         </div>

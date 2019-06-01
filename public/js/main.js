@@ -53,3 +53,8 @@ $('#exampleModal').on('shown.bs.modal', function () {
     }
     $('#quantity').focus();
 })  
+
+$('#customerMoney').change( function(){
+    $('#check-out').attr('href', '/check-out?money=' + $(this).val());
+    $('#change').val( ($(this).val() - parseFloat($('#totalCost').attr('placeholder'))).toFixed(2));
+})

@@ -109,7 +109,18 @@ app.get('*', function(req,res,next) {
             sum: 0
         };
     }
-   res.locals.cart = req.session.cart;
+   res.locals.user = req.user || null;
+   next();
+});
+
+app.post('*', function(req,res,next) {
+    //creating order object if it wasnt defined
+    if (typeof req.session.currentOrder === "undefined") {
+        req.session.currentOrder = {
+            products: [],
+            sum: 0
+        };
+    }
    res.locals.user = req.user || null;
    next();
 });

@@ -3,6 +3,7 @@ var router = express.Router();
 
 // Get Page model
 var Page = require('../models/page');
+var Order = require('../models/order');
 
 
 var Product = require('../models/product');
@@ -10,11 +11,9 @@ var Product = require('../models/product');
  * GET /
  */
 router.get('/', function (req, res) {
-    if (typeof req.session.currentOrder === "undefined") {
-        req.session.currentOrder = {
-            products: [],
-            sum: 0
-        };
+    let navClasses = {
+        'cas': 'active',
+        'storage':''
     }
     Product.find({}, (err, products) => {
         if (err) {
@@ -23,7 +22,8 @@ router.get('/', function (req, res) {
         } else {
             res.render('index', {
                 products: products,
-                order: req.session.currentOrder
+                order: req.session.currentOrder,
+                navClasses: navClasses
             })
         }
     });
@@ -92,7 +92,7 @@ router.post('/', function (req, res) {
                     name: p.title,
                     price: p.price,
                     quantity: 1,
-                    _id: id
+                    _id: p.id
                 });
                 //updating total sum
                 req.session.currentOrder.sum += p.price;
@@ -115,6 +115,84 @@ router.post('/', function (req, res) {
     })
 });
 
+router.get('/check-out', (req, res) => {
+    if (req.session.currentOrder.sum == 0) {
+        res.redirect('/');
+    } else {
+        let customerMoney = (parseFloat(req.query.money))?parseFloat(req.query.money): 0; 
+
+        //Decreasing quantity of all added products
+        req.session.currentOrder.products.forEach((el) => {
+            Product.findById(el._id, (err, doc) => {
+                if(err){console.log(err); return;}
+                console.log(doc);
+                doc.quantity -= el.quantity;
+                doc.save();
+            });
+        });
+        let orderDate = new Date();
+        let headline = ('0' + orderDate.getHours()).slice(-2) + ':' +  ('0' + orderDate.getMinutes()).slice(-2) + ' ' + ('0' + orderDate.getDate()).slice(-2) + '.' + ('0' + (orderDate.getMonth()+1)).slice(-2) + '.'  + orderDate.getFullYear();   
+        var newOrder = new Order({
+            products: req.session.currentOrder.products,
+            date: orderDate,
+            totalItemsCount: req.session.currentOrder.products.length,
+            totalSum: parseInt(req.session.currentOrder.sum),
+            headerStr: headline,
+            customerMoney: customerMoney
+        });
+        newOrder.save((err) => {
+            if(err){
+                console.log(err);
+                return res.redirect('/');
+            }
+            req.session.currentOrder = {
+                products: [],
+                sum: 0
+            };
+            res.redirect('/');
+        })
+    }
+});
+
+router.get('/storage', (req, res) => {
+    let navClasses = {
+        'cas': '',
+        'storage':'active'
+    }
+    Order.find({}, (err, orders) => {
+        res.render('storage', {
+            orders: orders,
+            navClasses: navClasses
+        })
+    })
+    
+});
+
+router.get('/checks', (req, res) => {
+    let navClasses = {
+        'cas': '',
+        'storage':'active'
+    }
+    Order.find({}, (err, orders) => {
+        res.render('storage', {
+            orders: orders,
+            navClasses: navClasses
+        })
+    })
+});
+
+router.get('/balance', (req, res) => {
+    let navClasses = {
+        'cas': '',
+        'storage':'active'
+    }
+    Product.find({}, (err, products) => {
+        res.render('balance', {
+            products: products,
+            navClasses: navClasses
+        })
+    })
+});
 
 
 // Exports

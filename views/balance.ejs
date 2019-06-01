@@ -1,0 +1,57 @@
+<% include _layouts/header %>
+<div class="row">
+    <h3>Баланс</h3>
+</div>
+<div class="row">
+    <!-- Tab panes -->
+    <div class="col-12">
+        <div class="row">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="" id="search">
+                <div class="input-group-append">
+                    <span class="input-group-text" id="basic-addon1">Пошук</span>
+                </div>
+
+            </div>
+        </div>
+        <table class="table table-hover table-borderless table-striped">
+            <thead>
+                <tr style="font-size: 0.7em;">
+                    <th>Назва</th>
+                    <th>Залишок</th>
+                    <th>Категорія</th>
+                    <th>Вартість</th>
+                </tr>
+            </thead>
+            <tbody id="products_table">
+                <% products.forEach(function(p){ %>
+                <tr class="content">
+                    <td scope="row"><%= p.title %></td>
+                     <td><h6><%= p.quantity %></h6></td>
+                      <td><%= p.category %></td>
+                    <td><%= p.price %></td>
+                    <td><button type="button" class="btn btn-outline-success btn-sm" data-toggle="modal"
+                            data-target="#exampleModal" data-whatever="<%= p.title %>"
+                            data-id="<%= p._id%>">
+                            Поповнити
+                        </button>
+                    </td>
+                    <td><button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal"
+                            data-target="#exampleModal" data-whatever="<%= p.title %>"
+                            data-id="<%= p._id%>">
+                            Списати
+                        </button>
+                    </td>
+                    <td><button type="button" class="btn btn-outline-warning btn-sm" data-toggle="modal"
+                            data-target="#exampleModal" data-whatever="<%= p.title %>"
+                            data-id="<%= p._id%>">
+                            Редагувати
+                        </button>
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<% include _layouts/footer %>
