@@ -19,6 +19,7 @@
                     <th>Дата</th>
                     <th>Загальна сума </th>
                     <th>Кількість чеків</th>
+                    <th>Середній чек</th>
                 </tr>
             </thead>
             <tbody id="products_table">
@@ -27,6 +28,7 @@
                     <td scope="row"><%= db.headerStr %></td>
                     <td><h6><%= db.totalSum %></h6></td>
                     <td><%= db.orders.length %></td>
+                    <td><%= (db.totalSum / db.orders.length).toFixed(2)%></td>
                     <td>
                         <a href="/day?id=<%=db.id%>">
                             <button type="button" class="btn btn-outline-primary btn-sm"">
