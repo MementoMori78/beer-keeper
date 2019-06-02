@@ -256,28 +256,43 @@ function createDayBalanceHeaderString(date) {
     return ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear();
 }
 
-router.get('/storage', (req, res) => {
+router.get('/day', (req, res) => {
     let navClasses = {
         'cas': '',
         'storage': 'active'
     }
-    Order.find({}, (err, orders) => {
-        res.render('storage', {
-            orders: orders,
-            navClasses: navClasses
-        })
+    DayBalance.findById(req.query.id, (err, dayBalance)=>{
+        if (err) {
+            console.log(err); return res.redirect('/');
+        } else {
+            Order.find( {
+                '_id': { $in: 
+                    dayBalance.orders
+                }
+            }, (err, orders) => {
+                if (err) {
+                    console.log(err); return res.redirect('/');
+                } else {
+                    res.render('day', {
+                        dayBalance: dayBalance,
+                        orders: orders,
+                        navClasses: navClasses
+                    })
+                }
+            });
+        }
     })
-
+    
 });
 
-router.get('/checks', (req, res) => {
+router.get('/days', (req, res) => {
     let navClasses = {
         'cas': '',
         'storage': 'active'
     }
-    Order.find({}, (err, orders) => {
+    DayBalance.find({}, (err, dayBalances) => {
         res.render('storage', {
-            orders: orders,
+            dbs: dayBalances,
             navClasses: navClasses
         })
     })

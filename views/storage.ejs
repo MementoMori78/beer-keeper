@@ -1,44 +1,43 @@
 <% include _layouts/header %>
 <div class="row">
-    <h3>Чеки</h3>
+    <h3>Денні звіти</h3>
 </div>
 <div class="row">
-    <div class="list-group col-4" id="myList" role="tablist">
-        <% orders.slice().reverse().forEach( (o) => { %>
-            <a class="list-group-item list-group-item-action" data-toggle="list" href="#<%= 'id-' + o._id%>" role="tab"><%= o.headerStr%></a>
-        <%})%>
-    </div>
     <!-- Tab panes -->
-    <div class="tab-content col-8">
-        <% orders.forEach( (o) => { %>
-            <div class="tab-pane" id="<%= 'id-' + o._id%>" role="tabpanel">
-                <table class="table table-hover table-borderless table-striped">
-                    <thead>
-                        <tr style="font-size: 0.7em;">
-                            <th>Назва</th>
-                            <th>Кількість</th>
-                            <th>Вартість</th>
-                            <th>Сума</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% o.products.forEach(function(p){ %>
-                        <tr class="content">
-                            <td scope="row"><%= p.name %></td>
-                            <td><%= p.quantity %></td>
-                            <td><%= p.price %></td>
-                            <td class="cost"><%= (p.price * p.quantity).toFixed(2)%></td>
-                        </tr>
-                        <% }); %>
-                    </tbody>
-                </table>
-                <ul class="list-group">
-                    <li class="list-group-item">Загальна сума: <%=o.totalSum.toFixed(2)%></li>
-                    <li class="list-group-item">Кошти клієнта: <%=o.customerMoney.toFixed(2)%></li>
-                    <li class="list-group-item">Решта: <%=(o.customerMoney - o.totalSum).toFixed(2)%></li>
-                </ul>
+    <div class="col-12">
+        <div class="row">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="" id="search">
+                <div class="input-group-append">
+                    <span class="input-group-text" id="basic-addon1">Пошук</span>
+                </div>
             </div>
-        <%})%>
+        </div>
+        <table class="table table-hover table-borderless table-striped">
+            <thead>
+                <tr style="font-size: 0.7em;">
+                    <th>Дата</th>
+                    <th>Загальна сума </th>
+                    <th>Кількість чеків</th>
+                </tr>
+            </thead>
+            <tbody id="products_table">
+                <% dbs.forEach(function(db){ %>
+                <tr class="content">
+                    <td scope="row"><%= db.headerStr %></td>
+                    <td><h6><%= db.totalSum %></h6></td>
+                    <td><%= db.orders.length %></td>
+                    <td>
+                        <a href="/day?id=<%=db.id%>">
+                            <button type="button" class="btn btn-outline-primary btn-sm"">
+                                Переглянути чеки
+                            </button>
+                        </a>
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
     </div>
 </div>
 <% include _layouts/footer %>
