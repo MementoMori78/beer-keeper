@@ -9,10 +9,7 @@ var ProductSchema = mongoose.Schema({
     slug: {
         type: String
     },
-    desc: {
-        type: String,
-        required: true
-    },
+    desc: String,   
     category: {
         type: String,
         required: true

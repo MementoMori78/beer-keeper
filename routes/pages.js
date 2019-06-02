@@ -4,6 +4,8 @@ var router = express.Router();
 // Get Page model
 var Page = require('../models/page');
 var Order = require('../models/order');
+var Category = require('../models/category');
+var DayBalance = require('../models/dayBalance');
 
 
 var Product = require('../models/product');
@@ -13,7 +15,7 @@ var Product = require('../models/product');
 router.get('/', function (req, res) {
     let navClasses = {
         'cas': 'active',
-        'storage':''
+        'storage': ''
     }
     Product.find({}, (err, products) => {
         if (err) {
@@ -27,6 +29,14 @@ router.get('/', function (req, res) {
             })
         }
     });
+});
+
+router.get('/clear_order', function (req, res) {
+    req.session.currentOrder = {
+        products: [],
+        sum: 0
+    }
+    res.redirect('/');
 });
 
 router.get('/del_product', function (req, res) {
@@ -119,19 +129,19 @@ router.get('/check-out', (req, res) => {
     if (req.session.currentOrder.sum == 0) {
         res.redirect('/');
     } else {
-        let customerMoney = (parseFloat(req.query.money))?parseFloat(req.query.money): 0; 
+        let customerMoney = (parseFloat(req.query.money)) ? parseFloat(req.query.money) : 0;
 
         //Decreasing quantity of all added products
         req.session.currentOrder.products.forEach((el) => {
             Product.findById(el._id, (err, doc) => {
-                if(err){console.log(err); return;}
+                if (err) { console.log(err); return; }
                 console.log(doc);
                 doc.quantity -= el.quantity;
                 doc.save();
             });
         });
         let orderDate = new Date();
-        let headline = ('0' + orderDate.getHours()).slice(-2) + ':' +  ('0' + orderDate.getMinutes()).slice(-2) + ' ' + ('0' + orderDate.getDate()).slice(-2) + '.' + ('0' + (orderDate.getMonth()+1)).slice(-2) + '.'  + orderDate.getFullYear();   
+        let headline = createOrderString(orderDate);
         var newOrder = new Order({
             products: req.session.currentOrder.products,
             date: orderDate,
@@ -140,24 +150,116 @@ router.get('/check-out', (req, res) => {
             headerStr: headline,
             customerMoney: customerMoney
         });
-        newOrder.save((err) => {
-            if(err){
+        newOrder.save((err, orderSaved) => {
+            if (err) {
                 console.log(err);
                 return res.redirect('/');
             }
-            req.session.currentOrder = {
-                products: [],
-                sum: 0
-            };
-            res.redirect('/');
+            //checking if dayBalance exists
+            DayBalance.find({}, (err, days) => {
+                //if dayBalances exist at all
+                if (days.length == 0) {
+                    let date = new Date();
+                    let dayBalanceHeaderString = createDayBalanceHeaderString(date);
+                    //creating new dayBalance
+                    let dayBalance = new DayBalance({
+                        orders: [orderSaved.id],
+                        date: date,
+                        totalSum: orderSaved.totalSum,
+                        headerStr: dayBalanceHeaderString,
+                        month: parseInt(date.getMonth()),
+                        day: parseInt(date.getDate()),
+                        year: parseInt(date.getFullYear())
+                    });
+                    //saving new dayBalance
+                    dayBalance.save((err, db) => {
+                        if (err) {
+                            console.log(err); return res.redirect('/');
+                        } else {
+                            //clearing current order
+                            req.session.currentOrder = {
+                                products: [],
+                                sum: 0
+                            };
+                            //redirecting to main
+                            res.redirect('/');
+                        }
+                    });
+                    //if there are DayBalance enty in database
+                } else {
+                    //checking if there is day balance with same day, month and year as today's
+                    let date = new Date();
+                    DayBalance.findOne({
+                        month: parseInt(date.getMonth()),
+                        day: parseInt(date.getDate()),
+                        year: parseInt(date.getFullYear())
+                    }, (err, dayBalance) => {
+                        if (err) {
+                            console.log(err); return res.redirect('/');
+                        } else {
+                            //checking if day balance with required date has been found
+                            if (dayBalance === null) { //means that not found
+                                let dayBalanceHeaderString = createDayBalanceHeaderString(date);
+                                let dayBalance = new DayBalance({
+                                    orders: [orderSaved.id],
+                                    date: date,
+                                    totalSum: orderSaved.totalSum,
+                                    headerStr: dayBalanceHeaderString,
+                                    month: parseInt(date.getMonth()),
+                                    day: parseInt(date.getDate()),
+                                    year: parseInt(date.getFullYear())
+                                });
+                                //saving new dayBalance
+                                dayBalance.save((err, db) => {
+                                    if (err) {
+                                        console.log(err); return res.redirect('/');
+                                    } else {
+                                        //clearing current order
+                                        req.session.currentOrder = {
+                                            products: [],
+                                            sum: 0
+                                        };
+                                        //redirecting to main
+                                        res.redirect('/');
+                                    }
+                                });
+                            } else { //means that dayBalance already exists
+                                dayBalance.totalSum += parseFloat(orderSaved.totalSum);
+                                dayBalance.orders.push(orderSaved.id);
+                                dayBalance.save( (err) => {
+                                    if (err) {
+                                        console.log(err); return res.redirect('/');
+                                    } else {
+                                         //clearing current order
+                                         req.session.currentOrder = {
+                                            products: [],
+                                            sum: 0
+                                        };
+                                        //redirecting to main
+                                        res.redirect('/');
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+            })
         })
     }
 });
 
+function createOrderString(date) {
+    return ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ' ' + ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear();
+}
+
+function createDayBalanceHeaderString(date) {
+    return ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear();
+}
+
 router.get('/storage', (req, res) => {
     let navClasses = {
         'cas': '',
-        'storage':'active'
+        'storage': 'active'
     }
     Order.find({}, (err, orders) => {
         res.render('storage', {
@@ -165,13 +267,13 @@ router.get('/storage', (req, res) => {
             navClasses: navClasses
         })
     })
-    
+
 });
 
 router.get('/checks', (req, res) => {
     let navClasses = {
         'cas': '',
-        'storage':'active'
+        'storage': 'active'
     }
     Order.find({}, (err, orders) => {
         res.render('storage', {
@@ -184,7 +286,7 @@ router.get('/checks', (req, res) => {
 router.get('/balance', (req, res) => {
     let navClasses = {
         'cas': '',
-        'storage':'active'
+        'storage': 'active'
     }
     Product.find({}, (err, products) => {
         res.render('balance', {
@@ -194,6 +296,147 @@ router.get('/balance', (req, res) => {
     })
 });
 
+router.get('/replenish', (req, res) => {
+    let navClasses = {
+        'cas': '',
+        'storage': 'active'
+    }
+    Product.findById(req.query.id, (err, product) => {
+        res.render('replenish', {
+            product: product,
+            navClasses: navClasses
+        })
+    })
+});
+
+router.post('/replenish', (req, res) => {
+    let navClasses = {
+        'cas': '',
+        'storage': 'active'
+    }
+    Product.findById(req.query.id, (err, product) => {
+        product.quantity += parseFloat(req.body.quantity);
+        product.save((err) => {
+            if (err) console.log(err);
+            res.redirect('balance');
+        })
+    })
+});
+
+
+
+router.get('/write-off', (req, res) => {
+    let navClasses = {
+        'cas': '',
+        'storage': 'active'
+    }
+    Product.findById(req.query.id, (err, product) => {
+        res.render('write_off', {
+            product: product,
+            navClasses: navClasses
+        })
+    })
+});
+
+router.post('/write-off', (req, res) => {
+    let navClasses = {
+        'cas': '',
+        'storage': 'active'
+    }
+    Product.findById(req.query.id, (err, product) => {
+        product.quantity -= parseFloat(req.body.quantity);
+        product.save((err) => {
+            if (err) console.log(err);
+            res.redirect('balance');
+        })
+    })
+});
+
+router.get('/edit', (req, res) => {
+    let navClasses = {
+        'cas': '',
+        'storage': 'active'
+    }
+    Product.findById(req.query.id, (err, product) => {
+        if (err) return console.log(err);
+        Category.find({}, (err, categories) => {
+            if (err) return console.log(err);
+            res.render('edit', {
+                categories: categories,
+                product: product,
+                navClasses: navClasses
+            })
+        });
+    })
+});
+
+router.post('/edit', (req, res) => {
+    let navClasses = {
+        'cas': '',
+        'storage': 'active'
+    }
+    Product.findById(req.query.id, (err, product) => {
+        product.title = (req.body.title) ? req.body.title : product.title;
+        product.price = parseFloat(req.body.price) ? parseFloat(req.body.price) : product.price;
+        product.category = req.body.category;
+        product.save((err) => {
+            if (err) console.log(err);
+            res.redirect('balance');
+        });
+    });
+});
+
+router.get('/create_product', (req, res) => {
+    let navClasses = {
+        'cas': '',
+        'storage': 'active'
+    }
+    Category.find({}, (err, categories) => {
+        if (err) return console.log(err);
+        res.render('create_product', {
+            categories: categories,
+            navClasses: navClasses
+        })
+    });
+});
+
+router.post('/create_product', (req, res) => {
+
+    let newProduct = new Product({
+        title: req.body.title,
+        price: parseFloat(req.body.price),
+        category: req.body.category,
+        desс: 'desc',
+        quantity: 0
+    })
+
+    newProduct.save((err) => {
+        if (err) { console.log(err); res.redirect('/balance'); }
+        res.redirect('balance');
+    });
+});
+
+router.get('/create_category', (req, res) => {
+    let navClasses = {
+        'cas': '',
+        'storage': 'active'
+    }
+    res.render('create_сategory', {
+        navClasses: navClasses
+    });
+});
+
+router.post('/create_category', (req, res) => {
+
+    let newCategory = new Category({
+        title: req.body.title,
+    })
+
+    newCategory.save((err) => {
+        if (err) { console.log(err); res.redirect('/balance'); }
+        res.redirect('balance');
+    });
+});
 
 // Exports
 module.exports = router;

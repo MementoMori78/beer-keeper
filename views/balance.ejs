@@ -11,7 +11,6 @@
                 <div class="input-group-append">
                     <span class="input-group-text" id="basic-addon1">Пошук</span>
                 </div>
-
             </div>
         </div>
         <table class="table table-hover table-borderless table-striped">
@@ -30,23 +29,26 @@
                      <td><h6><%= p.quantity %></h6></td>
                       <td><%= p.category %></td>
                     <td><%= p.price %></td>
-                    <td><button type="button" class="btn btn-outline-success btn-sm" data-toggle="modal"
-                            data-target="#exampleModal" data-whatever="<%= p.title %>"
-                            data-id="<%= p._id%>">
+                    <td>
+                        <a href="/replenish?id=<%=p._id%>">
+                        <button type="button" class="btn btn-outline-success btn-sm" href="/replenish?id=<%=p._id%>">
                             Поповнити
                         </button>
+                        </a>
                     </td>
-                    <td><button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal"
-                            data-target="#exampleModal" data-whatever="<%= p.title %>"
-                            data-id="<%= p._id%>">
+                    <td>
+                        <a href="/write-off?id=<%=p._id%>">
+                        <button type="button" class="btn btn-outline-danger btn-sm" >
                             Списати
                         </button>
+                        </a>
                     </td>
-                    <td><button type="button" class="btn btn-outline-warning btn-sm" data-toggle="modal"
-                            data-target="#exampleModal" data-whatever="<%= p.title %>"
-                            data-id="<%= p._id%>">
+                    <td>
+                    <a href="/edit?id=<%=p._id%>">
+                        <button type="button" class="btn btn-outline-warning btn-sm" href="/edit?id=<%=p._id%>">
                             Редагувати
                         </button>
+                        </a>
                     </td>
                 </tr>
                 <% }); %>
