@@ -168,6 +168,6 @@ app.use('/', pages);
 var port = 3000;
 app.on('ready', () => {
     app.listen(port, function () {
-        console.log('Server started on port ' + port);
+        console.log('Сервер успішно запущено, для використання - у браузері перейдіть за посиланням localhost:' + port);
     });
 })

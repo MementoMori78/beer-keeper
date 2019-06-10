@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-
+var async = require("async");
 // Get Page model
 var Page = require('../models/page');
 var Order = require('../models/order');
@@ -55,15 +55,15 @@ router.get('/del_product', function (req, res) {
 });
 
 router.get('/del_product_from_db', function (req, res) {
-    console.log(`GET [/del] params: id=${req.query.id}`);  
-    Product.remove({_id: req.query.id}, (err) => {
-        if(!err){
+    console.log(`GET [/del] params: id=${req.query.id}`);
+    Product.remove({ _id: req.query.id }, (err) => {
+        if (!err) {
             console.log(`Deleted id:${req.query.id}`);
             res.redirect('/balance');
         } else {
             console.log(err);
         }
-    } );
+    });
 });
 
 /*
@@ -109,7 +109,7 @@ router.post('/', function (req, res) {
                     quantity: quantity,
                     _id: id
                 });
-                if(p){
+                if (p) {
                     //adding bottle
                     req.session.currentOrder.products.push({
                         name: p.title,
@@ -145,14 +145,28 @@ router.get('/check-out', (req, res) => {
     } else {
         let customerMoney = (parseFloat(req.query.money)) ? parseFloat(req.query.money) : 0;
 
+        console.log('Cheking out, session object: ', req.session.currentOrder)
         //Decreasing quantity of all added products
-        req.session.currentOrder.products.forEach((el) => {
-            Product.findById(el._id, (err, doc) => {
-                if (err) { console.log(err); return; }
-                console.log(doc);
-                doc.quantity -= el.quantity;
-                doc.save();
-            });
+        //Summing quantity for each product so we will query the db for each product only once. Object structure as follows
+        //  {
+        //      "id1" : <value1>,  
+        //      "id2" : <value2>    
+        //  }
+        let quantityToDecreaseByProduct = {};
+        req.session.currentOrder.products.forEach((product) => {
+            if (Object.getOwnPropertyNames(quantityToDecreaseByProduct).indexOf(product._id) != -1) {
+                quantityToDecreaseByProduct[product._id] += product.quantity;
+            } else {
+                quantityToDecreaseByProduct[product._id] = product.quantity;
+            }
+        });
+        console.log('Quantity to decrease:', quantityToDecreaseByProduct);
+        Object.getOwnPropertyNames(quantityToDecreaseByProduct).forEach((productID) => {
+            Product.findById(productID, (err, product) => {
+                if(err) {console.log(`Помилка при зменшенні кількості продукта: ${err}`); return;}
+                product.quantity -= quantityToDecreaseByProduct[productID];
+                product.save();
+            })
         });
         let orderDate = new Date();
         let headline = createOrderString(orderDate);
@@ -240,12 +254,12 @@ router.get('/check-out', (req, res) => {
                             } else { //means that dayBalance already exists
                                 dayBalance.totalSum += parseFloat(orderSaved.totalSum);
                                 dayBalance.orders.push(orderSaved.id);
-                                dayBalance.save( (err) => {
+                                dayBalance.save((err) => {
                                     if (err) {
                                         console.log(err); return res.redirect('/');
                                     } else {
-                                         //clearing current order
-                                         req.session.currentOrder = {
+                                        //clearing current order
+                                        req.session.currentOrder = {
                                             products: [],
                                             sum: 0
                                         };
@@ -275,13 +289,14 @@ router.get('/day', (req, res) => {
         'cas': '',
         'storage': 'active'
     }
-    DayBalance.findById(req.query.id, (err, dayBalance)=>{
+    DayBalance.findById(req.query.id, (err, dayBalance) => {
         if (err) {
             console.log(err); return res.redirect('/');
         } else {
-            Order.find( {
-                '_id': { $in: 
-                    dayBalance.orders
+            Order.find({
+                '_id': {
+                    $in:
+                        dayBalance.orders
                 }
             }, (err, orders) => {
                 if (err) {
@@ -296,7 +311,7 @@ router.get('/day', (req, res) => {
             });
         }
     })
-    
+
 });
 
 router.get('/days', (req, res) => {
