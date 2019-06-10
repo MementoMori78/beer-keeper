@@ -163,7 +163,7 @@ router.get('/check-out', (req, res) => {
         console.log('Quantity to decrease:', quantityToDecreaseByProduct);
         Object.getOwnPropertyNames(quantityToDecreaseByProduct).forEach((productID) => {
             Product.findById(productID, (err, product) => {
-                if(err) {console.log(`Помилка при зменшенні кількості продукта: ${err}`); return;}
+                if (err) { console.log(`Помилка при зменшенні кількості продукта: ${err}`); return; }
                 product.quantity -= quantityToDecreaseByProduct[productID];
                 product.save();
             })
@@ -471,7 +471,6 @@ router.get('/create_category', (req, res) => {
 });
 
 router.post('/create_category', (req, res) => {
-
     let newCategory = new Category({
         title: req.body.title,
     })
@@ -480,6 +479,17 @@ router.post('/create_category', (req, res) => {
         if (err) { console.log(err); res.redirect('/balance'); }
         res.redirect('balance');
     });
+});
+
+router.get('/add-discount', (req, res) => {
+    let userInput = parseInt(req.query.discount)
+    if (userInput > 0 && userInput <= 100) {
+        req.session.currentOrder.discount = userInput;
+        req.session.currentOrder.sum -= (req.session.currentOrder.sum * ( req.session.currentOrder.discount / 100.))    
+    } else {
+        console.log(`Некоректне значення для знижки: ${req.query.discount}`);
+    }
+    res.redirect('/')
 });
 
 // Exports

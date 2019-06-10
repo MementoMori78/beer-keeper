@@ -59,3 +59,11 @@ $('#customerMoney').change(function () {
     $('#check-out').attr('href', '/check-out?money=' + $(this).val());
     $('#change').val(($(this).val() - parseFloat($('#totalCost').attr('placeholder'))).toFixed(2));
 })
+
+$('#discount-input').change(function () {
+    let input = parseInt($(this).val());
+    console.log(input);
+    if (input > 0 && input <= 100) {
+        $('#update-discount-btn').attr('href', '/add-discount?discount=' + $(this).val());
+    }
+})
