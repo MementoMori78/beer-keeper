@@ -54,6 +54,18 @@ router.get('/del_product', function (req, res) {
     res.redirect('/');
 });
 
+router.get('/del_product_from_db', function (req, res) {
+    console.log(`GET [/del] params: id=${req.query.id}`);  
+    Product.remove({_id: req.query.id}, (err) => {
+        if(!err){
+            console.log(`Deleted id:${req.query.id}`);
+            res.redirect('/balance');
+        } else {
+            console.log(err);
+        }
+    } );
+});
+
 /*
  * POST /. Adding a product to the order
  */
@@ -97,15 +109,17 @@ router.post('/', function (req, res) {
                     quantity: quantity,
                     _id: id
                 });
-                //adding bottle
-                req.session.currentOrder.products.push({
-                    name: p.title,
-                    price: p.price,
-                    quantity: 1,
-                    _id: p.id
-                });
-                //updating total sum
-                req.session.currentOrder.sum += p.price;
+                if(p){
+                    //adding bottle
+                    req.session.currentOrder.products.push({
+                        name: p.title,
+                        price: p.price,
+                        quantity: 1,
+                        _id: p.id
+                    });
+                    //updating total sum
+                    req.session.currentOrder.sum += p.price;
+                }
                 req.session.currentOrder.sum += parseFloat(product.price) * parseFloat(quantity);
                 res.redirect('/');
             });

@@ -1,6 +1,6 @@
 <% include _layouts/header %>
 <div class="row">
-    <h3>Баланс</h3>
+    <h3>Баланс товару</h3>
 </div>
 <div class="row">
     <!-- Tab panes -->
@@ -48,6 +48,13 @@
                         <button type="button" class="btn btn-outline-warning btn-sm" href="/edit?id=<%=p._id%>">
                             Редагувати
                         </button>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/del_product_from_db?id=<%=p._id%>">
+                            <button type="button" class="btn btn-danger btn-sm"">
+                                Видалити
+                            </button>
                         </a>
                     </td>
                 </tr>
