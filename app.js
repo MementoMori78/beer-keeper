@@ -11,10 +11,32 @@ var passport = require('passport');
 // Connect to db
 mongoose.connect(config.database);
 var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-    console.log('Connected to MongoDB');
+    console.log('Підключено до БД за посиланням: ' + config.database);
+    app.emit('ready');
 });
+
+db.on('error', (err) => {
+    console.log('Помилка бази даних: ' + err);
+    mongoose.disconnect();
+});
+
+db.on('disconnected', function () {
+    console.log('Втрачено підключення з БД. Перезапустіть ПЗ або ж зверніться до telegram:@vlad_tertyshnyi');
+    console.log('Автоматичне перепідключення до БД...');
+    mongoose.connect(config.database, {server:{auto_reconnect:true}});
+});
+
+db.on('reconnected', function () {
+    console.log('Перепідключено до БД!');
+});
+
+process.on('SIGINT', function() {  
+    db.close(function () { 
+      console.log('Скасовано підключення до бази даних у звязку з вимкненням сервера'); 
+      process.exit(0); 
+    }); 
+  }); 
 
 // Init app
 var app = express();
@@ -41,7 +63,7 @@ app.use(fileUpload());
 // Body Parser middleware
 // 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
@@ -50,15 +72,15 @@ app.use(session({
     secret: 'keyboard cat',
     resave: true,
     saveUninitialized: true
-//  cookie: { secure: true }
+    //  cookie: { secure: true }
 }));
 
 // Express Validator middleware
 app.use(expressValidator({
     errorFormatter: function (param, msg, value) {
         var namespace = param.split('.')
-                , root = namespace.shift()
-                , formParam = root;
+            , root = namespace.shift()
+            , formParam = root;
 
         while (namespace.length) {
             formParam += '[' + namespace.shift() + ']';
@@ -101,7 +123,7 @@ require('./config/passport')(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('*', function(req,res,next) {
+app.get('*', function (req, res, next) {
     //creating order object if it wasnt defined
     if (typeof req.session.currentOrder === "undefined") {
         req.session.currentOrder = {
@@ -109,11 +131,11 @@ app.get('*', function(req,res,next) {
             sum: 0
         };
     }
-   res.locals.user = req.user || null;
-   next();
+    res.locals.user = req.user || null;
+    next();
 });
 
-app.post('*', function(req,res,next) {
+app.post('*', function (req, res, next) {
     //creating order object if it wasnt defined
     if (typeof req.session.currentOrder === "undefined") {
         req.session.currentOrder = {
@@ -121,8 +143,8 @@ app.post('*', function(req,res,next) {
             sum: 0
         };
     }
-   res.locals.user = req.user || null;
-   next();
+    res.locals.user = req.user || null;
+    next();
 });
 
 // Set routes 
@@ -144,6 +166,8 @@ app.use('/', pages);
 
 // Start the server
 var port = 3000;
-app.listen(port, function () {
-    console.log('Server started on port ' + port);
-});
+app.on('ready', () => {
+    app.listen(port, function () {
+        console.log('Server started on port ' + port);
+    });
+})
