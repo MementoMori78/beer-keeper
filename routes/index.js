@@ -169,7 +169,6 @@ router.get('/check-out', (req, res) => {
                 quantityToDecreaseByProduct[product._id] = product.quantity;
             }
         });
-        console.log('Quantity to decrease:', quantityToDecreaseByProduct);
         Object.getOwnPropertyNames(quantityToDecreaseByProduct).forEach((productID) => {
             Product.findById(productID, (err, product) => {
                 if (err) { console.log(`Помилка при зменшенні кількості продукта: ${err}`); return; }
@@ -179,11 +178,12 @@ router.get('/check-out', (req, res) => {
         });
         let orderDate = new Date();
         let headline = createOrderString(orderDate);
+        let totalSum = req.session.currentOrder.discount?req.session.currentOrder.discountSum:req.session.currentOrder.sum;
         var newOrder = new Order({
             products: req.session.currentOrder.products,
             date: orderDate,
             totalItemsCount: req.session.currentOrder.products.length,
-            totalSum: parseInt(req.session.currentOrder.sum),
+            totalSum: totalSum,
             headerStr: headline,
             customerMoney: customerMoney,
             discount: req.session.currentOrder.discount,

@@ -34,12 +34,11 @@
                 </tbody>
             </table>
             <ul class="list-group">
-                <li class="list-group-item">Загальна сума: <%=o.totalSum.toFixed(2)%></li>
+                <li class="list-group-item">Cума: <%=o.totalSum.toFixed(2)%></li>
                 <% if(!o.discount) {%>
                 <li class="list-group-item">Кошти клієнта: <%=o.customerMoney.toFixed(2)%></li>
                 <li class="list-group-item">Решта: <%=(o.customerMoney - o.totalSum).toFixed(2)%></li>
                 <%} else {%>
-                <li class="list-group-item">Cума зі знижкою: <%=o.discountSum.toFixed(2)%></li>
                 <li class="list-group-item">Знижка: <%=( o.discount) + '%'%></li>
                 <li class="list-group-item">Кошти клієнта: <%=o.customerMoney.toFixed(2)%></li>
                 <li class="list-group-item">Решта: <%=(o.customerMoney - o.discountSum).toFixed(2)%></li>

@@ -120,7 +120,7 @@
                 <tr class="content" style="display: none;">
                     <td scope="row"><%= p.title %></td>
                     <td><%= p.price %></td>
-                    <td><%= p.quantity %></td>
+                    <td><%= p.quantity.toFixed(2) %></td>
                     <td><button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal"
                             data-target="#exampleModal" data-whatever="<%= p.title %>"
                             data-id="<%= p._id%>">Додати</button></td>
