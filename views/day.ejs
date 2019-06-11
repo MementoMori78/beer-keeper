@@ -6,7 +6,7 @@
     <div class="list-group col-4" id="myList" role="tablist">
         <% orders.slice().reverse().forEach( (o) => { %>
         <a class="list-group-item list-group-item-action" data-toggle="list" href="#<%= 'id-' + o._id%>"
-            role="tab"><%= o.headerStr %> <b> <%= o.discount ? o.discountSum.toFixed(2):o.totalSum.toFixed(2)%> ₴ </b></a>
+            role="tab"><%= o.headerStr %> <b> <%= o.discount ? o.discountSum.toFixed(2) + "⬇️":o.totalSum.toFixed(2)%> ₴ </b></a>
         <%})%>
     </div>
     <!-- Tab panes -->

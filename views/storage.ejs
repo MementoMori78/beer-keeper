@@ -19,14 +19,14 @@
                 <% dbs.forEach(function(db){ %>
                 <tr class="content">
                     <td scope="row"><%= db.headerStr %></td>
-                    <td><h6><%= db.totalSum %></h6></td>
+                    <td>
+                        <h6><%= db.totalSum %></h6>
+                    </td>
                     <td><%= db.orders.length %></td>
                     <td><%= (db.totalSum / db.orders.length).toFixed(2)%></td>
                     <td>
-                        <a href="/day?id=<%=db.id%>">
-                            <button type="button" class="btn btn-outline-primary btn-sm"">
-                                Переглянути чеки
-                            </button>
+                        <a href="/day?id=<%=db.id%>" class="btn btn-outline-primary btn-sm">
+                            Чеки
                         </a>
                     </td>
                 </tr>
