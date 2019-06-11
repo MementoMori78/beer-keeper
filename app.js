@@ -8,8 +8,15 @@ var expressValidator = require('express-validator');
 var fileUpload = require('express-fileupload');
 var passport = require('passport');
 
-// Connect to db
-mongoose.connect(config.database);
+
+mongoose.Promise = global.Promise;
+const options = { useMongoClient: true, autoReconnect: true, reconnectTries: 60, reconnectInterval: 5000}
+// Connect to db3000
+mongoose.connect(config.database, options, (err) => {
+    if (err) {
+        console.log('Невдала спроба першого підключення до БД. ');
+    }
+});
 var db = mongoose.connection;
 db.once('open', function () {
     console.log('Підключено до БД за посиланням: ' + config.database);
@@ -17,26 +24,25 @@ db.once('open', function () {
 });
 
 db.on('error', (err) => {
-    console.log('Помилка бази даних: ' + err);
+    console.log('Помилка бази даних.');
     mongoose.disconnect();
 });
 
 db.on('disconnected', function () {
     console.log('Втрачено підключення з БД. Перезапустіть ПЗ або ж зверніться до telegram:@vlad_tertyshnyi');
     console.log('Автоматичне перепідключення до БД...');
-    mongoose.connect(config.database, {server:{auto_reconnect:true}});
 });
 
 db.on('reconnected', function () {
     console.log('Перепідключено до БД!');
 });
 
-process.on('SIGINT', function() {  
-    db.close(function () { 
-      console.log('Скасовано підключення до бази даних у звязку з вимкненням сервера'); 
-      process.exit(0); 
-    }); 
-  }); 
+process.on('SIGINT', function () {
+    db.close(function () {
+        console.log('Скасовано підключення до бази даних у звязку з вимкненням сервера');
+        process.exit(0);
+    });
+});
 
 // Init app
 var app = express();
@@ -50,12 +56,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Set global errors variable
 app.locals.errors = null;
-
-// Get Page Model
-var Page = require('./models/page');
-
-
-
 
 // Express fileUpload middleware
 app.use(fileUpload());
@@ -148,7 +148,7 @@ app.post('*', function (req, res, next) {
 });
 
 // Set routes 
-var pages = require('./routes/pages.js');
+var index = require('./routes/index.js');
 var products = require('./routes/products.js');
 var cart = require('./routes/cart.js');
 var users = require('./routes/users.js');
@@ -162,12 +162,12 @@ app.use('/admin/products', adminProducts);
 app.use('/products', products);
 app.use('/cart', cart);
 app.use('/users', users);
-app.use('/', pages);
+app.use('/', index);
 
 // Start the server
 var port = 3000;
 app.on('ready', () => {
     app.listen(port, function () {
-        console.log('Сервер успішно запущено, для використання - у браузері перейдіть за посиланням localhost:' + port);
+        console.log(`Сервер успішно запущено. \nДля використання - перейдіть за посиланням localhost:${port} у браузері`);
     });
 })

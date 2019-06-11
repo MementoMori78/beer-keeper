@@ -9,8 +9,8 @@ var Page = require('../models/page');
 /*
  * GET pages index
  */
-router.get('/', isAdmin, function (req, res) {
-    Page.find({}).sort({sorting: 1}).exec(function (err, pages) {
+router.get('/', function (req, res) {
+    Page.find({}).sort({ sorting: 1 }).exec(function (err, pages) {
         res.render('admin/pages', {
             pages: pages
         });
@@ -20,7 +20,7 @@ router.get('/', isAdmin, function (req, res) {
 /*
  * GET add page
  */
-router.get('/add-page', isAdmin, function (req, res) {
+router.get('/add-page', function (req, res) {
 
     var title = "";
     var slug = "";
@@ -58,7 +58,7 @@ router.post('/add-page', function (req, res) {
             content: content
         });
     } else {
-        Page.findOne({slug: slug}, function (err, page) {
+        Page.findOne({ slug: slug }, function (err, page) {
             if (page) {
                 req.flash('danger', 'Page slug exists, choose another.');
                 res.render('admin/add_page', {
@@ -78,7 +78,7 @@ router.post('/add-page', function (req, res) {
                     if (err)
                         return console.log(err);
 
-                    Page.find({}).sort({sorting: 1}).exec(function (err, pages) {
+                    Page.find({}).sort({ sorting: 1 }).exec(function (err, pages) {
                         if (err) {
                             console.log(err);
                         } else {
@@ -127,7 +127,7 @@ router.post('/reorder-pages', function (req, res) {
     var ids = req.body['id[]'];
 
     sortPages(ids, function () {
-        Page.find({}).sort({sorting: 1}).exec(function (err, pages) {
+        Page.find({}).sort({ sorting: 1 }).exec(function (err, pages) {
             if (err) {
                 console.log(err);
             } else {
@@ -183,7 +183,7 @@ router.post('/edit-page/:id', function (req, res) {
             id: id
         });
     } else {
-        Page.findOne({slug: slug, _id: {'$ne': id}}, function (err, page) {
+        Page.findOne({ slug: slug, _id: { '$ne': id } }, function (err, page) {
             if (page) {
                 req.flash('danger', 'Page slug exists, choose another.');
                 res.render('admin/edit_page', {
@@ -206,7 +206,7 @@ router.post('/edit-page/:id', function (req, res) {
                         if (err)
                             return console.log(err);
 
-                        Page.find({}).sort({sorting: 1}).exec(function (err, pages) {
+                        Page.find({}).sort({ sorting: 1 }).exec(function (err, pages) {
                             if (err) {
                                 console.log(err);
                             } else {
@@ -236,7 +236,7 @@ router.get('/delete-page/:id', isAdmin, function (req, res) {
         if (err)
             return console.log(err);
 
-        Page.find({}).sort({sorting: 1}).exec(function (err, pages) {
+        Page.find({}).sort({ sorting: 1 }).exec(function (err, pages) {
             if (err) {
                 console.log(err);
             } else {

@@ -10,7 +10,9 @@ var OrderSchema = mongoose.Schema({
     totalItemsCount: Number,
     totalSum: Number,
     headerStr: String,
-    customerMoney: Number
+    customerMoney: Number,
+    discount: Number, 
+    discountSum: Number
 });
 
 var Order = module.exports = mongoose.model('Order', OrderSchema);

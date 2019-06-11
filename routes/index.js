@@ -50,6 +50,9 @@ router.get('/del_product', function (req, res) {
     if (typeof _index != 'undefined') {
         req.session.currentOrder.sum -= (req.session.currentOrder.products[_index].price * req.session.currentOrder.products[_index].quantity);
         req.session.currentOrder.products.splice(_index, 1);
+        if(req.session.currentOrder.discount){
+            req.session.currentOrder.discountSum = req.session.currentOrder.sum - (req.session.currentOrder.sum * (req.session.currentOrder.discount / 100.));
+        }
     }
     res.redirect('/');
 });
@@ -121,6 +124,9 @@ router.post('/', function (req, res) {
                     req.session.currentOrder.sum += p.price;
                 }
                 req.session.currentOrder.sum += parseFloat(product.price) * parseFloat(quantity);
+                if(req.session.currentOrder.discount){
+                    req.session.currentOrder.discountSum = req.session.currentOrder.sum - (req.session.currentOrder.sum * (req.session.currentOrder.discount / 100.));
+                }
                 res.redirect('/');
             });
         } else {
@@ -133,6 +139,9 @@ router.post('/', function (req, res) {
             });
             //updating total sum
             req.session.currentOrder.sum += product.price * quantity;
+            if(req.session.currentOrder.discount){
+                req.session.currentOrder.discountSum = req.session.currentOrder.sum - (req.session.currentOrder.sum * (req.session.currentOrder.discount / 100.));
+            }
             console.log(req.session.currentOrder);
             res.redirect('/');
         }
@@ -176,7 +185,9 @@ router.get('/check-out', (req, res) => {
             totalItemsCount: req.session.currentOrder.products.length,
             totalSum: parseInt(req.session.currentOrder.sum),
             headerStr: headline,
-            customerMoney: customerMoney
+            customerMoney: customerMoney,
+            discount: req.session.currentOrder.discount,
+            discountSum: req.session.currentOrder.discountSum,
         });
         newOrder.save((err, orderSaved) => {
             if (err) {
@@ -483,10 +494,16 @@ router.post('/create_category', (req, res) => {
 
 router.get('/add-discount', (req, res) => {
     let userInput = parseInt(req.query.discount)
-    if (userInput > 0 && userInput <= 100) {
+    if (userInput >= 0 && userInput <= 100) {
         req.session.currentOrder.discount = userInput;
-        req.session.currentOrder.sum -= (req.session.currentOrder.sum * ( req.session.currentOrder.discount / 100.))    
+        req.session.currentOrder.discountSum = req.session.currentOrder.sum - (req.session.currentOrder.sum * (req.session.currentOrder.discount / 100.));
+        if (userInput) {
+            req.flash('success', `Успішно застосовано знижку ${userInput}%! Щоб скасувати - вкажіть знижку рівною 0%`);
+        } else {
+            req.flash('warning', `Знижку скасовано`);
+        }
     } else {
+        req.flash('error', `Некоректне значення для знижки: ${req.query.discount}`);
         console.log(`Некоректне значення для знижки: ${req.query.discount}`);
     }
     res.redirect('/')

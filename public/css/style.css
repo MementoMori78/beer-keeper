@@ -98,3 +98,11 @@ table.alignmiddle td {
      font-weight: bolder;
      font-size: 1.2em;
  }
+
+ .no-spinners {
+    -moz-appearance:textfield;
+  }
+  
+  .card-body .order-table {
+    max-height: 600px;
+  }

@@ -31,10 +31,18 @@ $(document).ready(function () {
             else {
                 $(this).hide();
             }
-            if (!value && window.location.href != "http://localhost:3000/balance") { $(this).hide(); }
+            if (!value && window.location.href != "http://localhost:3000/balance" && window.location.href != "http://localhost:3000/days" ) { 
+                $(this).hide(); 
+            }
         });
     }
     $('#search').focus();
+    $('#balance-table').DataTable( {
+       
+    });
+    $('#days-table').DataTable( {
+       
+    });
 });
 
 $('#exampleModal').on('show.bs.modal', function (event) {
@@ -57,7 +65,11 @@ $('#exampleModal').on('shown.bs.modal', function () {
 
 $('#customerMoney').change(function () {
     $('#check-out').attr('href', '/check-out?money=' + $(this).val());
-    $('#change').val(($(this).val() - parseFloat($('#totalCost').attr('placeholder'))).toFixed(2));
+    if (!$('#totalCostWithDiscount').attr('placeholder')) {
+        $('#change').val(($(this).val() - parseFloat($('#totalCost').attr('placeholder'))).toFixed(2));
+    } else { 
+        $('#change').val(($(this).val() - parseFloat($('#totalCostWithDiscount').attr('placeholder'))).toFixed(2));
+    }
 })
 
 $('#discount-input').change(function () {

@@ -4,7 +4,7 @@
     <div class="col-sm-7" id="check">
         <div class="card bg-light">
             <h5 class="card-header">Поточне замовлення</h5>
-            <div class="card-body">
+            <div class="card-body order-table">
                 <table class="table table-hover table-borderless table-striped">
                     <thead>
                         <tr style="font-size: 0.7em;">
@@ -40,20 +40,33 @@
                         <span class="input-group-text" id="basic-addon3">грн.</span>
                     </div>
                 </div>
+                <% if(order.discount){ %>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon3">Cума зі знижкою:</span>
+                        </div>
+                        <input class="form-control" id="totalCostWithDiscount" name="totalCostWithDiscount"
+                            placeholder="<%= order.discountSum.toFixed(2) %>" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon3">грн.</span>
+                        </div>
+                    </div>
+                <% } %>
                 <div class="input-group mb-3">
 
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon3">Кошти клієнта:</span>
                     </div>
-                    <input class="form-control" id="customerMoney" name="customerMoney" min="0" placeholder="0.00"
-                        type="number" form="checkout">
+                    <input class="form-control no-spinners" id="customerMoney" name="customerMoney" min="0"
+                        placeholder="0.00" type="number" form="checkout">
                     <div class="input-group-append">
                         <span class="input-group-text" id="basic-addon3">грн.</span>
                     </div>
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon3">Решта:</span>
                     </div>
-                    <input class="form-control" id="change" name="change" placeholder="0.00" type="number" disabled>
+                    <input class="form-control no-spinners" id="change" name="change" placeholder="0.00" type="number"
+                        disabled>
                     <div class="input-group-append">
                         <span class="input-group-text" id="basic-addon3">грн.</span>
                     </div>
@@ -62,20 +75,21 @@
                     <div class="col-6">
                         <div class="input-group mb-3">
 
-                            <input type="number" class="form-control" id="discount-input"
-                                aria-label="Text input with checkbox" min="0" max="100" placeholder="<%=(order.discount)?order.discount:0%>">
+                            <input type="number" class="form-control no-spinners" id="discount-input"
+                                aria-label="Text input with checkbox" min="0" max="100"
+                                placeholder="<%=(order.discount)?order.discount:0%>">
                             <div class="input-group-append">
                                 <span class="input-group-text" id="basic-addon3">%</span>
                             </div>
 
-                            <a href="/add-discount?discount=0" id="update-discount-btn">
-                                <button class="btn btn-outline-success" type="button">+ Знижка</button>
+                            <a href="/add-discount?discount=0" class="btn btn-outline-success" id="update-discount-btn">
+                                + Знижка
                             </a>
                         </div>
 
                     </div>
                     <div class="col-6">
-                        <a href="#" class="btn btn-danger">Очистити</a>
+                        <a href="/clear_order" class="btn btn-danger">Очистити</a>
                         <a href="/check-out" class="btn btn-success" id="check-out">Зберегти</a>
                     </div>
                 </div>
@@ -131,7 +145,8 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon3">Кількість:</span>
                             </div>
-                            <input type="number" class="form-control" id="quantity" step="0.01" min="0" name="quantity">
+                            <input type="number" class="form-control no-spinners" id="quantity" step="0.001" min="0"
+                                name="quantity">
                             <div class="input-group-append">
                                 <span class="input-group-text">кг</span>
                             </div>
