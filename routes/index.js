@@ -82,7 +82,7 @@ router.post('/', function (req, res) {
     Product.findById(id, (err, product) => {
         if (err) { console.log(err); }
         //Adding Bottles to order if type of the product is beer  
-        if (product.category == "Пиво") {
+        if (product.category == "Пиво" || product.category == "ПИВО" || product.category == "ВИНО") {
             let bottleName = 'Пляшка ';
             let addStr;
             switch (parseFloat(quantity)) {
