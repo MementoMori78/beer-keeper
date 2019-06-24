@@ -82,7 +82,7 @@ router.post('/', function (req, res) {
     Product.findById(id, (err, product) => {
         if (err) { console.log(err); }
         //Adding Bottles to order if type of the product is beer  
-        if (product.category == "Пиво") {
+        if (product.category == "Пиво" || product.category == "ПИВО" || product.category == "ВИНО") {
             let bottleName = 'Пляшка ';
             let addStr;
             switch (parseFloat(quantity)) {
@@ -300,10 +300,12 @@ router.get('/day', (req, res) => {
         'cas': '',
         'storage': 'active'
     }
+    
     DayBalance.findById(req.query.id, (err, dayBalance) => {
         if (err) {
             console.log(err); return res.redirect('/');
         } else {
+            if(!dayBalance) return res.redirect('/');
             Order.find({
                 '_id': {
                     $in:

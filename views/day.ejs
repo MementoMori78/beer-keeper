@@ -5,9 +5,30 @@
 <div class="row">
     <div class="list-group col-4" id="myList" role="tablist">
         <% orders.slice().reverse().forEach( (o) => { %>
-        <a class="list-group-item list-group-item-action" data-toggle="list" href="#<%= 'id-' + o._id%>"
+        <a class="list-group-item list-group-item-action" data-toggle="list" href="#<%= 'id-' + o._id%>" onclick="hideDayInfo()"
             role="tab"><%= o.headerStr %> <b> <%= o.discount ? o.discountSum.toFixed(2) + "⬇️":o.totalSum.toFixed(2)%> ₴ </b></a>
         <%})%>
+    </div>
+
+    <div class = "col-8 " id="day-info"> 
+        <table class="table table-hover table-borderless table-striped" id="day-info-table">
+                <thead>
+                    <tr style="font-size: 0.7em;">
+                        <th>Назва</th>
+                        <th>Кількість</th>
+                        <th>Вартість</th>
+                        <th>Сума</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="content">
+                        <td scope="row">Назва</td>
+                        <td>Кількість</td>
+                        <td>Вартість</td>
+                        <td class="cost">Сума</td>
+                    </tr>
+                </tbody>
+            </table>
     </div>
     <!-- Tab panes -->
     <div class="tab-content col-8">

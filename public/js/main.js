@@ -66,6 +66,10 @@ $(document).ready(function () {
         language: languageUkr,
         "order": [[ 0, "desc" ]]
     });
+    $('#day-info-table').DataTable( {
+        language: languageUkr,
+        "order": [[ 1, "desc" ]]
+    });
 });
 
 $('#exampleModal').on('show.bs.modal', function (event) {
@@ -102,3 +106,7 @@ $('#discount-input').change(function () {
         $('#update-discount-btn').attr('href', '/add-discount?discount=' + $(this).val());
     }
 })
+
+function hideDayInfo(){
+    $('#day-info').hide();
+}

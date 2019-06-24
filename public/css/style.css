@@ -106,3 +106,8 @@ table.alignmiddle td {
   .card-body .order-table {
     max-height: 600px;
   }
+
+  #myList {
+    height: 600px;
+    overflow-y:scroll;
+  }
