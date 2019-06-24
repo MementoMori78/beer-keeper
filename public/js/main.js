@@ -90,6 +90,13 @@ $('#exampleModal').on('shown.bs.modal', function () {
     $('#quantity').focus();
 })
 
+$('#exampleModalBeer').on('shown.bs.modal', function () {
+    if ($('#quantityBeer').val()) {
+        $('#quantityBeer').val('');
+    }
+    $('#quantityBeer').focus();
+})
+
 $('#customerMoney').change(function () {
     $('#check-out').attr('href', '/check-out?money=' + $(this).val());
     if (!$('#totalCostWithDiscount').attr('placeholder')) {

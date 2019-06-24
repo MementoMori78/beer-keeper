@@ -41,16 +41,16 @@
                     </div>
                 </div>
                 <% if(order.discount){ %>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon3">Cума зі знижкою:</span>
-                        </div>
-                        <input class="form-control" id="totalCostWithDiscount" name="totalCostWithDiscount"
-                            placeholder="<%= order.discountSum.toFixed(2) %>" disabled>
-                        <div class="input-group-append">
-                            <span class="input-group-text" id="basic-addon3">грн.</span>
-                        </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon3">Cума зі знижкою:</span>
                     </div>
+                    <input class="form-control" id="totalCostWithDiscount" name="totalCostWithDiscount"
+                        placeholder="<%= order.discountSum.toFixed(2) %>" disabled>
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon3">грн.</span>
+                    </div>
+                </div>
                 <% } %>
                 <div class="input-group mb-3">
 
@@ -122,8 +122,9 @@
                     <td><%= p.price %></td>
                     <td><%= p.quantity.toFixed(2) %></td>
                     <td><button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal"
-                            data-target="#exampleModal" data-whatever="<%= p.title %>"
-                            data-id="<%= p._id%>">Додати</button></td>
+                            <% if(p.category == "Пиво" || p.category == "ПИВО" || p.category == "ВИНО"){%>
+                            data-target="#exampleModalBeer" <%} else { %> data-target="#exampleModal" <%} %>
+                            data-whatever="<%= p.title %>" data-id="<%= p._id%>">Додати</button></td>
                 </tr>
                 <% }); %>
             </tbody>
@@ -157,6 +158,41 @@
                 <div class="modal-footer">
                     <button type="submit" form="add_product_form" class="btn btn-primary">Додати</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModalBeer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Вкажіть кількість для</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="add_product_form" method="post" action="/">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon3">Кількість:</span>
+                            </div>
+                            <input type="number" class="form-control no-spinners" id="quantityBeer" step="0.5" min="0.5"
+                                max="2.5" name="quantity">
+                            <div class="input-group-append">
+                                <span class="input-group-text">кг</span>
+                            </div>
+                        </div>
+                        <input type="string" id="_id" style="display: none;" name="id">
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" form="add_product_form" class="btn btn-primary">Додати</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
+                    <label class="radio"><input type="radio" name="mult" >X2</label>
+                    <label class="radio"><input type="radio" name="mult">X3</label>
                 </div>
             </div>
         </div>
