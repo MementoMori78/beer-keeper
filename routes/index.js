@@ -74,9 +74,19 @@ router.get('/del_product_from_db', function (req, res) {
  */
 router.post('/', function (req, res) {
     let id = req.body.id;
+    console.log(req.body); 
     let quantity = parseFloat(req.body.quantity);
-    if (!quantity) {
+    if (!quantity || !id) {
+        req.flash('error', `bad request. sorry, can't process it`);
         return res.redirect('/')
+    }
+    let mult = 1;
+    if(req.body.mult){
+        if(req.body.mult == 'x2'){
+            mult = 2
+        }else{
+            mult = 3;
+        }
     }
     console.log(`POST [/] params: id=${id} quantity=${quantity}`);
     Product.findById(id, (err, product) => {
@@ -106,24 +116,26 @@ router.post('/', function (req, res) {
             Product.findOne({ title: bottleName }, (err, p) => {
                 if (err) { console.log(err); return res.redirect('/') }
                 //adding main product
-                req.session.currentOrder.products.push({
-                    name: product.title,
-                    price: product.price,
-                    quantity: quantity,
-                    _id: id
-                });
-                if (p) {
-                    //adding bottle
+                for(let i = 0; i < mult; i++){
                     req.session.currentOrder.products.push({
-                        name: p.title,
-                        price: p.price,
-                        quantity: 1,
-                        _id: p.id
+                        name: product.title,
+                        price: product.price,
+                        quantity: quantity,
+                        _id: id
                     });
-                    //updating total sum
-                    req.session.currentOrder.sum += p.price;
+                    if (p) {
+                        //adding bottle
+                        req.session.currentOrder.products.push({
+                            name: p.title,
+                            price: p.price,
+                            quantity: 1,
+                            _id: p.id
+                        });
+                        //updating total sum
+                        req.session.currentOrder.sum += p.price;
+                    }
+                    req.session.currentOrder.sum += parseFloat(product.price) * parseFloat(quantity);
                 }
-                req.session.currentOrder.sum += parseFloat(product.price) * parseFloat(quantity);
                 if(req.session.currentOrder.discount){
                     req.session.currentOrder.discountSum = req.session.currentOrder.sum - (req.session.currentOrder.sum * (req.session.currentOrder.discount / 100.));
                 }

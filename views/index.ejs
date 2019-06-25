@@ -173,7 +173,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="add_product_form" method="post" action="/">
+                    <form id="add_product_form_beer" method="post" action="/">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon3">Кількість:</span>
@@ -184,15 +184,15 @@
                                 <span class="input-group-text">кг</span>
                             </div>
                         </div>
-                        <input type="string" id="_id" style="display: none;" name="id">
+                        <input type="string" id="_id_beer" style="display: none;" name="id">
 
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" form="add_product_form" class="btn btn-primary">Додати</button>
+                    <button type="submit" form="add_product_form_beer" class="btn btn-primary">Додати</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
-                    <label class="radio"><input type="radio" name="mult" >X2</label>
-                    <label class="radio"><input type="radio" name="mult">X3</label>
+                    <label class="radio"><input type="radio" name="mult" value="x2" form="add_product_form_beer" >X2</label>
+                    <label class="radio"><input type="radio" name="mult" value="x3" form="add_product_form_beer" >X3</label>
                 </div>
             </div>
         </div>
