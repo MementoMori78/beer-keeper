@@ -128,3 +128,5 @@ $('#discount-input').change(function () {
 function hideDayInfo(){
     $('#day-info').hide();
 }
+
+

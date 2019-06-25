@@ -111,3 +111,10 @@ table.alignmiddle td {
     height: 750px;
     overflow-y:scroll;
   }
+
+  #plotStat {
+    box-shadow: 0 4px 25px 0 rgba(0, 0, 0, .33);
+    margin-bottom: 15px;
+    margin-top: 15px;
+  }
+

@@ -6,8 +6,8 @@ var Page = require('../models/page');
 var Order = require('../models/order');
 var Category = require('../models/category');
 var DayBalance = require('../models/dayBalance');
-
-
+var moment = require('moment');
+moment.locale('uk');
 var Product = require('../models/product');
 /*
  * GET /
@@ -50,7 +50,7 @@ router.get('/del_product', function (req, res) {
     if (typeof _index != 'undefined') {
         req.session.currentOrder.sum -= (req.session.currentOrder.products[_index].price * req.session.currentOrder.products[_index].quantity);
         req.session.currentOrder.products.splice(_index, 1);
-        if(req.session.currentOrder.discount){
+        if (req.session.currentOrder.discount) {
             req.session.currentOrder.discountSum = req.session.currentOrder.sum - (req.session.currentOrder.sum * (req.session.currentOrder.discount / 100.));
         }
     }
@@ -74,17 +74,17 @@ router.get('/del_product_from_db', function (req, res) {
  */
 router.post('/', function (req, res) {
     let id = req.body.id;
-    console.log(req.body); 
+    console.log(req.body);
     let quantity = parseFloat(req.body.quantity);
     if (!quantity || !id) {
         req.flash('error', `bad request. sorry, can't process it`);
         return res.redirect('/')
     }
     let mult = 1;
-    if(req.body.mult){
-        if(req.body.mult == 'x2'){
+    if (req.body.mult) {
+        if (req.body.mult == 'x2') {
             mult = 2
-        }else{
+        } else {
             mult = 3;
         }
     }
@@ -116,7 +116,7 @@ router.post('/', function (req, res) {
             Product.findOne({ title: bottleName }, (err, p) => {
                 if (err) { console.log(err); return res.redirect('/') }
                 //adding main product
-                for(let i = 0; i < mult; i++){
+                for (let i = 0; i < mult; i++) {
                     req.session.currentOrder.products.push({
                         name: product.title,
                         price: product.price,
@@ -136,7 +136,7 @@ router.post('/', function (req, res) {
                     }
                     req.session.currentOrder.sum += parseFloat(product.price) * parseFloat(quantity);
                 }
-                if(req.session.currentOrder.discount){
+                if (req.session.currentOrder.discount) {
                     req.session.currentOrder.discountSum = req.session.currentOrder.sum - (req.session.currentOrder.sum * (req.session.currentOrder.discount / 100.));
                 }
                 res.redirect('/');
@@ -151,7 +151,7 @@ router.post('/', function (req, res) {
             });
             //updating total sum
             req.session.currentOrder.sum += product.price * quantity;
-            if(req.session.currentOrder.discount){
+            if (req.session.currentOrder.discount) {
                 req.session.currentOrder.discountSum = req.session.currentOrder.sum - (req.session.currentOrder.sum * (req.session.currentOrder.discount / 100.));
             }
             console.log(req.session.currentOrder);
@@ -190,7 +190,7 @@ router.get('/check-out', (req, res) => {
         });
         let orderDate = new Date();
         let headline = createOrderString(orderDate);
-        let totalSum = req.session.currentOrder.discount?req.session.currentOrder.discountSum:req.session.currentOrder.sum;
+        let totalSum = req.session.currentOrder.discount ? req.session.currentOrder.discountSum : req.session.currentOrder.sum;
         var newOrder = new Order({
             products: req.session.currentOrder.products,
             date: orderDate,
@@ -312,12 +312,12 @@ router.get('/day', (req, res) => {
         'cas': '',
         'storage': 'active'
     }
-    
+
     DayBalance.findById(req.query.id, (err, dayBalance) => {
         if (err) {
             console.log(err); return res.redirect('/');
         } else {
-            if(!dayBalance) return res.redirect('/');
+            if (!dayBalance) return res.redirect('/');
             Order.find({
                 '_id': {
                     $in:
@@ -345,9 +345,22 @@ router.get('/days', (req, res) => {
         'storage': 'active'
     }
     DayBalance.find({}, (err, dayBalances) => {
+
+        let plotObj = {
+            x: [], //totalSum
+            y: [], //date
+            type: 'bar'
+        };
+        for (let i = (dayBalances.length - 1); i >= 0 && i > dayBalances.length - 30; i--) {
+            
+            plotObj.x.push(dayBalances[i].totalSum.toFixed(2));
+            let date = moment(dayBalances[i].date);
+            plotObj.y.push(date.format('DD.MM ddd'));
+        }
         res.render('storage', {
             dbs: dayBalances,
-            navClasses: navClasses
+            navClasses: navClasses, 
+            plotTrace: plotObj
         })
     })
 });
