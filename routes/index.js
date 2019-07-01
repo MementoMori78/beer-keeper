@@ -327,10 +327,31 @@ router.get('/day', (req, res) => {
                 if (err) {
                     console.log(err); return res.redirect('/');
                 } else {
+                    //counting sold quantity for each product
+                    let productsTale = []; //store result in here
+                    orders.forEach( (order)=>{
+                        order.products.forEach( (product) => {
+                            //looking if such product is already in result array
+                            let productFromTable = productsTale.find( el => el._id == product._id);
+                            //is in result arrays, so we are just adding the quantity 
+                            if(productFromTable){
+                                productFromTable.quantity += product.quantity;
+                            }else{
+                                //else - pushing new product object to the array
+                                productsTale.push( {
+                                    name: product.name,
+                                    price: product.price,
+                                    quantity: product.quantity,
+                                    _id: product._id
+                                });
+                            }
+                        });
+                    } );
                     res.render('day', {
                         dayBalance: dayBalance,
                         orders: orders,
-                        navClasses: navClasses
+                        navClasses: navClasses,
+                        productsTable: productsTale
                     })
                 }
             });

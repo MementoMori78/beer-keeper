@@ -14,19 +14,21 @@
         <table class="table table-hover table-borderless table-striped" id="day-info-table">
                 <thead>
                     <tr style="font-size: 0.7em;">
-                        <th>Назва</th>
-                        <th>Кількість</th>
+                        <th>Продукт</th>
+                        <th>Продано за день</th>
                         <th>Вартість</th>
-                        <th>Сума</th>
+                        <th>На суму</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <% productsTable.forEach(function(p){ %>
                     <tr class="content">
-                        <td scope="row">Назва</td>
-                        <td>Кількість</td>
-                        <td>Вартість</td>
-                        <td class="cost">Сума</td>
+                        <td scope="row"><%= p.name %></td>
+                        <td><%= p.quantity.toFixed(2) %></td>
+                        <td><%= p.price.toFixed(2) %></td>
+                        <td class="cost"><%= (p.price * p.quantity).toFixed(2)%></td>
                     </tr>
+                    <% }); %>
                 </tbody>
             </table>
     </div>
