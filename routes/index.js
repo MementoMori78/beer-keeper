@@ -372,12 +372,21 @@ router.get('/days', (req, res) => {
             y: [], //date
             type: 'bar'
         };
-        for (let i = (dayBalances.length - 1); i >= 0 && i > dayBalances.length - 30; i--) {
-            
-            plotObj.x.push(dayBalances[i].totalSum.toFixed(2));
+        let years = [];
+        for (let i = (dayBalances.length - 1); i >= 0 && i > dayBalances.length - 70; i--) {
             let date = moment(dayBalances[i].date);
-            plotObj.y.push(date.format('DD.MM ddd'));
+            let weekFromPlotIndex = plotObj.y.findIndex( week => week == date.week());
+            if(weekFromPlotIndex !== -1){
+                plotObj.x[weekFromPlotIndex] += dayBalances[i].totalSum;
+            } else {
+                plotObj.x.push(dayBalances[i].totalSum);
+                plotObj.y.push(date.week());
+                years.push(date.year());
+            }
         }
+        plotObj.y.forEach( (el, index, arr) => {
+            arr[index] = `${moment().day("Понеділок").year(years[index]).week(el).format('DD.MM')} - ${moment().day("Неділя").year(years[index]).week(el).format('DD.MM')}`
+        })
         res.render('storage', {
             dbs: dayBalances,
             navClasses: navClasses, 
