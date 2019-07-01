@@ -58,6 +58,7 @@ $(document).ready(function () {
         }
     }
     $('#search').focus();
+    $.fn.dataTable.moment( 'DD.MM.YYYY');
     $('#balance-table').DataTable( {
         language: languageUkr,
         "order": [[ 1, "asc" ]]
