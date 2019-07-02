@@ -1,9 +1,6 @@
 $(function () {
-    if ($('textarea#ta').length) {
-        CKEDITOR.replace('ta');
-    }
     $('a.confirmDeletion').on('click', function () {
-        if (!confirm('Confirm deletion'))
+        if (!confirm('Підтвердіть видалленя'))
             return false;
     });
 
@@ -36,6 +33,7 @@ $(document).ready(function () {
             }
         });
     }
+    $('#search').focus();
     const languageUkr = {
         "sProcessing":   "Зачекайте...",
         "sLengthMenu":   "Показати _MENU_ записів",
@@ -57,7 +55,7 @@ $(document).ready(function () {
             "sSortDescending": ": активувати для сортування стовпців за спаданням"
         }
     }
-    $('#search').focus();
+    
     $.fn.dataTable.moment( 'DD.MM.YYYY');
     $('#balance-table').DataTable( {
         language: languageUkr,
@@ -92,16 +90,19 @@ $('#exampleModalBeer').on('show.bs.modal', function (event) {
     var id = button.data('id');
     var modal = $(this)
     modal.find('.modal-title').text('Вкажіть кількість для ' + recipient);
+    //changes value of a hidden input field to the selected product's ID
     $('#_id_beer').val(id);
 })
 
+
+//guarantees that modal window will show up with empty input  
 $('#exampleModal').on('shown.bs.modal', function () {
     if ($('#quantity').val()) {
         $('#quantity').val('');
     }
     $('#quantity').focus();
 })
-
+//guarantees that modal window will show up with empty input  
 $('#exampleModalBeer').on('shown.bs.modal', function () {
     if ($('#quantityBeer').val()) {
         $('#quantityBeer').val('');

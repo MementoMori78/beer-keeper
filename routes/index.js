@@ -121,7 +121,8 @@ router.post('/', function (req, res) {
                         name: product.title,
                         price: product.price,
                         quantity: quantity,
-                        _id: id
+                        _id: id,
+                        category: product.category
                     });
                     if (p) {
                         //adding bottle
@@ -129,7 +130,8 @@ router.post('/', function (req, res) {
                             name: p.title,
                             price: p.price,
                             quantity: 1,
-                            _id: p.id
+                            _id: p.id,
+                            category: p.category
                         });
                         //updating total sum
                         req.session.currentOrder.sum += p.price;
@@ -147,7 +149,8 @@ router.post('/', function (req, res) {
                 name: product.title,
                 price: product.price,
                 quantity: quantity,
-                _id: id
+                _id: id,
+                category: product.category
             });
             //updating total sum
             req.session.currentOrder.sum += product.price * quantity;
@@ -328,30 +331,37 @@ router.get('/day', (req, res) => {
                     console.log(err); return res.redirect('/');
                 } else {
                     //counting sold quantity for each product
-                    let productsTale = []; //store result in here
-                    orders.forEach( (order)=>{
-                        order.products.forEach( (product) => {
+                    let productsTable = []; //store result in here
+                    let discountedSum = 0;
+                    orders.forEach((order) => {
+                        if (order.discount && order.discount < 100) {
+                            let initialSum = (order.totalSum * 100) / (100 - order.discount);
+                            discountedSum += initialSum - order.discountSum;
+                        }
+                        order.products.forEach((product) => {
                             //looking if such product is already in result array
-                            let productFromTable = productsTale.find( el => el._id == product._id);
+                            let productFromTable = productsTable.find(el => el._id == product._id);
                             //is in result arrays, so we are just adding the quantity 
-                            if(productFromTable){
+                            if (productFromTable) {
                                 productFromTable.quantity += product.quantity;
-                            }else{
+                            } else {
                                 //else - pushing new product object to the array
-                                productsTale.push( {
+                                productsTable.push({
                                     name: product.name,
                                     price: product.price,
                                     quantity: product.quantity,
-                                    _id: product._id
+                                    _id: product._id,
+                                    category: product.category
                                 });
                             }
                         });
-                    } );
+                    });
                     res.render('day', {
                         dayBalance: dayBalance,
                         orders: orders,
                         navClasses: navClasses,
-                        productsTable: productsTale
+                        productsTable: productsTable,
+                        discountedSum: discountedSum
                     })
                 }
             });
@@ -372,15 +382,24 @@ router.get('/days', (req, res) => {
             y: [], //date
             type: 'bar'
         };
-        for (let i = (dayBalances.length - 1); i >= 0 && i > dayBalances.length - 30; i--) {
-            
-            plotObj.x.push(dayBalances[i].totalSum.toFixed(2));
+        let years = [];
+        for (let i = (dayBalances.length - 1); i >= 0 && i > dayBalances.length - 70; i--) {
             let date = moment(dayBalances[i].date);
-            plotObj.y.push(date.format('DD.MM ddd'));
+            let weekFromPlotIndex = plotObj.y.findIndex(week => week == date.week());
+            if (weekFromPlotIndex !== -1) {
+                plotObj.x[weekFromPlotIndex] += dayBalances[i].totalSum;
+            } else {
+                plotObj.x.push(dayBalances[i].totalSum);
+                plotObj.y.push(date.week());
+                years.push(date.year());
+            }
         }
+        plotObj.y.forEach((el, index, arr) => {
+            arr[index] = `${moment().day("Понеділок").year(years[index]).week(el).format('DD.MM')} - ${moment().day("Неділя").year(years[index]).week(el).format('DD.MM')}`
+        })
         res.render('storage', {
             dbs: dayBalances,
-            navClasses: navClasses, 
+            navClasses: navClasses,
             plotTrace: plotObj
         })
     })
