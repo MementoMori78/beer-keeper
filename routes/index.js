@@ -302,6 +302,75 @@ router.get('/check-out', (req, res) => {
     }
 });
 
+router.get('/checkout', (req, res) => {
+    console.log()
+    if(req.session.currentOrder.sum == 0){
+        req.flash('error', 'Загальна сума - 0. Замовлення пусте');
+        return res.redirect('/');
+    } else if(!req.query.id){
+        req.flash('error', 'Не вказаний ID заявки');
+        return res.redirect('/');
+    }
+    Order.findById(req.query.id, (err, order) => {
+        if(err){
+            console.warn(err);
+            req.flash('warning', 'Вказаний ID не знайдений у БД');
+            return res.redirect('/');
+        }
+        if(!order){
+            req.flash('warning', 'Вказаний ID не знайдений у БД');
+            return res.render('/');
+        }
+        let totalSum = req.session.currentOrder.discount ? req.session.currentOrder.discountSum : req.session.currentOrder.sum;
+        order.totalItemsCount = req.session.currentOrder.products.length;
+        /*
+            besides changing required fields of the order, 
+            we are calculating the difference between
+            new and old sum of the order. So we can further apply 
+            changes to sum of the Day Balance this order is related to 
+        */
+        let diffSum = totalSum - order.totalSum;
+        order.totalSum = totalSum;
+        order.discount = req.session.currentOrder.discount;
+        order.discountSum = req.session.currentOrder.discountSum;
+        order.products = req.session.currentOrder.products
+        //trying to save changed order
+        order.save( (err)=>{
+            if(err){
+                console.warn(err);
+                req.flash('warning', 'Помилка при збереженні відредагованого замовлення');
+                return res.redirect('/');
+            }
+            //if no errors - looking for day balance that contains order wich we are saving
+            DayBalance.findOne({orders: req.query.id}, (err, db)=> {
+                if(err){
+                    console.warn(err);
+                    req.flash('warning', 'Помилка при збереженні відредагованого замовлення');
+                    return res.redirect('/');
+                }
+                //if no errors - changing total sum of the day balance
+                db.totalSum += diffSum;
+                //trying to save the day balance
+                db.save( (err) => {
+                    if(err){
+                        console.warn(err);
+                        req.flash('warning', 'Помилка при збереженні відредагованого замовлення');
+                        return res.redirect('/');
+                    }
+                     //if no errors - clearing order
+                    req.session.currentOrder = {
+                        products: [],
+                        sum: 0
+                    };
+                    //flashing success message
+                    req.flash('success', `Успішно оновлено Замовлення за ${order.headerStr}`);
+                    res.redirect('/');
+                });
+            });
+        });
+    })
+})
+
 function createOrderString(date) {
     return ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ' ' + ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear();
 }
@@ -575,6 +644,62 @@ router.get('/add-discount', (req, res) => {
     }
     res.redirect('/')
 });
+
+router.get('/delete_order', (req, res) => {
+    if(!req.query.id){
+        req.flash('error', 'Не вказано ID замовлення яке необхідно видалити');
+        return res.redirect('/days')
+    }
+    Order.findById(req.query.id, (err, order) => {
+        if(err){
+            console.warn(err);
+            req.flash('warning', 'Вказаний ID не знайдений у БД');
+            return res.redirect('/');
+        }
+        if(!order){
+            req.flash('warning', 'Вказаний ID не знайдений у БД');
+            return res.redirect('/');
+        }
+        let removedSum = order.totalSum;
+        order.remove((err)=>{
+            if(err){
+                console.warn(err);
+                req.flash('warning', 'Помилка при збереженні відредагованого замовлення');
+                return res.redirect('/');
+            }
+            //if no errors - looking for day balance that contains order wich we are saving
+            DayBalance.findOne({orders: req.query.id}, (err, db)=> {
+                if(err){
+                    console.warn(err);
+                    req.flash('warning', 'Помилка при збереженні відредагованого замовлення');
+                    return res.redirect('/');
+                }
+                //if no errors - changing total sum of the day balance
+                db.totalSum -= removedSum;
+                let index = db.orders.findIndex( el => el == req.query.id);
+                if(index !== -1){
+                    db.orders.splice(index, 1);
+                }
+                //trying to save the day balance
+                db.save( (err) => {
+                    if(err){
+                        console.warn(err);
+                        req.flash('warning', 'Помилка при видаленні');
+                        return res.redirect('/');
+                    }
+                     //if no errors - clearing order
+                    req.session.currentOrder = {
+                        products: [],
+                        sum: 0
+                    };
+                    //flashing success message
+                    req.flash('success', `Успішно видалено замовлення ${req.query.id}`);
+                    res.redirect('/days');
+                });
+            });
+        });
+    })
+})
 
 // Exports
 module.exports = router;

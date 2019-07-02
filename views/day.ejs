@@ -5,36 +5,37 @@
 <div class="row">
     <div class="list-group col-4" id="myList" role="tablist">
         <% orders.slice().reverse().forEach( (o) => { %>
-        <a class="list-group-item list-group-item-action" data-toggle="list" href="#<%= 'id-' + o._id%>" onclick="hideDayInfo()"
-            role="tab"><%= o.headerStr %> <b> <%= o.discount ? o.discountSum.toFixed(2) + "⬇️":o.totalSum.toFixed(2)%> ₴ </b></a>
+        <a class="list-group-item list-group-item-action" data-toggle="list" href="#<%= 'id-' + o._id%>"
+            onclick="hideDayInfo()" role="tab"><%= o.headerStr %> <b>
+                <%= o.discount ? o.discountSum.toFixed(2) + "⬇️":o.totalSum.toFixed(2)%> ₴ </b></a>
         <%})%>
     </div>
 
-    <div class = "col-8 " id="day-info"> 
+    <div class="col-8 " id="day-info">
         <h4> Каса за день: <%=dayBalance.totalSum.toFixed(0) %> грн.</h4>
         <h4> Надано знижок на суму: <%=discountedSum.toFixed(2) %> грн.</h4>
         <table class="table table-hover table-borderless table-striped" id="day-info-table">
-                <thead>
-                    <tr style="font-size: 0.7em;">
-                        <th>Продукт</th>
-                        <th>Категорія</th>
-                        <th>Продано за день</th>
-                        <th>Вартість</th>
-                        <th>На суму</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% productsTable.forEach(function(p){ %>
-                    <tr class="content">
-                        <td scope="row"><%= p.name %></td>
-                        <td><%= p.category %></td>
-                        <td><%= p.quantity.toFixed(2) %></td>
-                        <td><%= p.price.toFixed(2) %></td>
-                        <td class="cost"><%= (p.price * p.quantity).toFixed(2)%></td>
-                    </tr>
-                    <% }); %>
-                </tbody>
-            </table>
+            <thead>
+                <tr style="font-size: 0.7em;">
+                    <th>Продукт</th>
+                    <th>Категорія</th>
+                    <th>Продано за день</th>
+                    <th>Вартість</th>
+                    <th>На суму</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% productsTable.forEach(function(p){ %>
+                <tr class="content">
+                    <td scope="row"><%= p.name %></td>
+                    <td><%= p.category %></td>
+                    <td><%= p.quantity.toFixed(2) %></td>
+                    <td><%= p.price.toFixed(2) %></td>
+                    <td class="cost"><%= (p.price * p.quantity).toFixed(2)%></td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
     </div>
     <!-- Tab panes -->
     <div class="tab-content col-8">
@@ -60,6 +61,7 @@
                     <% }); %>
                 </tbody>
             </table>
+            <p style="color: white; cursor: default;"> <%= o._id %></p>
             <ul class="list-group">
                 <li class="list-group-item">Cума: <%=o.totalSum.toFixed(2)%></li>
                 <% if(!o.discount) {%>
@@ -68,9 +70,9 @@
                 <%} else {%>
                 <li class="list-group-item">Знижка: <%=( o.discount) + '%'%></li>
                 <li class="list-group-item">Кошти клієнта: <%=o.customerMoney.toFixed(2)%></li>
-                <li class="list-group-item">Решта: <%=(o.customerMoney - o.discountSum).toFixed(2)%></li>
+                <li class="list-group-item">Решта: <%=(o.customerMoney - o.discountSum).toFixed(2)%> </li>
                 <%}%>
-                </ul>
+            </ul>
             </div>
         <%})%>
         </div>
