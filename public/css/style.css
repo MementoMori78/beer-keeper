@@ -118,3 +118,25 @@ table.alignmiddle td {
     margin-top: 15px;
   }
 
+#totalCost::placeholder {
+    font-size: 1.5em;
+    color: green; 
+}
+
+#totalCost {
+    font-size: 1.5em;
+    color: #fff;
+    text-align: center;
+    -webkit-animation: glow 1s ease-in-out infinite alternate;
+    -moz-animation: glow 1s ease-in-out infinite alternate;
+    animation: glow 1s ease-in-out infinite alternate;
+  }
+  
+  @-webkit-keyframes glow {
+    from {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px rgb(255, 255, 255), 0 0 70px rgb(255, 255, 255), 0 0 80px rgb(255, 255, 255), 0 0 100px rgb(255, 255, 255), 0 0 150px rgb(255, 255, 255);
+      }
+      to {
+        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px rgb(0, 255, 0), 0 0 35px rgb(43, 255, 0), 0 0 40px rgb(21, 255, 0), 0 0 50px rgb(9, 255, 0), 0 0 75px rgb(0, 255, 34);
+      }
+  }
