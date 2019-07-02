@@ -27,7 +27,7 @@
                 <tr class="content">
                     <td scope="row"><%= db.headerStr %></td>
                     <td>
-                        <h6><%= db.totalSum.toFixed(2) %></h6>
+                        <%= db.totalSum.toFixed(2) %>
                     </td>
                     <td><%= db.orders.length %></td>
                     <td><%= (db.totalSum / db.orders.length).toFixed(2)%></td>
