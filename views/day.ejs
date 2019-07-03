@@ -67,10 +67,12 @@
                 <% if(!o.discount) {%>
                 <li class="list-group-item">Кошти клієнта: <%=o.customerMoney.toFixed(2)%></li>
                 <li class="list-group-item">Решта: <%=(o.customerMoney - o.totalSum).toFixed(2)%></li>
+                <li class="list-group-item list-group-item-danger"><a href="/delete_order?id=<%=o._id%>" class="text-dark check-deletion" >Видалити замовлення</a></li>
                 <%} else {%>
                 <li class="list-group-item">Знижка: <%=( o.discount) + '%'%></li>
                 <li class="list-group-item">Кошти клієнта: <%=o.customerMoney.toFixed(2)%></li>
                 <li class="list-group-item">Решта: <%=(o.customerMoney - o.discountSum).toFixed(2)%> </li>
+                <li class="list-group-item list-group-item-danger"><a href="/delete_order?id=<%=o._id%>" class="text-dark check-deletion">Видалити замовлення</a></li>
                 <%}%>
             </ul>
             </div>

@@ -4,6 +4,13 @@ $(function () {
             return false;
     });
 
+    $('a.check-deletion').on('click', function () {
+        if (prompt('Підтвердіть видалленя', 'Код доступа') !== '12321'){
+            alert('Куди лізеш, фраєрок?!');
+            return false;
+        }
+    });
+
     if ($("[data-fancybox]").length) {
         $("[data-fancybox]").fancybox();
     }
