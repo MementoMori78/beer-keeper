@@ -12,7 +12,9 @@
                             <th>Кількість</th>
                             <th>Вартість</th>
                             <th>Сума</th>
+                            <th> </th>
                             <th>Дія</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -22,6 +24,8 @@
                             <td><%= p.quantity %></td>
                             <td><%= p.price %></td>
                             <td class="cost"><%= (p.price * p.quantity).toFixed(2)%></td>
+                            <td><a href="/print?name=<%= p.name %>&quantity=<%= p.quantity %>"><button type="button"
+                                        class="btn btn-outline-primary btn-sm">Друк</button></a></td>
                             <td><a href="/del_product?id=<%= p._id %>&quantity=<%= p.quantity %>"><button type="button"
                                         class="btn btn-outline-danger btn-sm">Видалити</button></a></td>
                         </tr>

@@ -7,6 +7,8 @@ var Order = require('../models/order');
 var Category = require('../models/category');
 var DayBalance = require('../models/dayBalance');
 var moment = require('moment');
+var iconc = require('iconv-lite');
+
 moment.locale('uk');
 var Product = require('../models/product');
 /*
@@ -304,20 +306,20 @@ router.get('/check-out', (req, res) => {
 
 router.get('/checkout', (req, res) => {
     console.log()
-    if(req.session.currentOrder.sum == 0){
+    if (req.session.currentOrder.sum == 0) {
         req.flash('error', 'Загальна сума - 0. Замовлення пусте');
         return res.redirect('/');
-    } else if(!req.query.id){
+    } else if (!req.query.id) {
         req.flash('error', 'Не вказаний ID заявки');
         return res.redirect('/');
     }
     Order.findById(req.query.id, (err, order) => {
-        if(err){
+        if (err) {
             console.warn(err);
             req.flash('warning', 'Вказаний ID не знайдений у БД');
             return res.redirect('/');
         }
-        if(!order){
+        if (!order) {
             req.flash('warning', 'Вказаний ID не знайдений у БД');
             return res.render('/');
         }
@@ -335,15 +337,15 @@ router.get('/checkout', (req, res) => {
         order.discountSum = req.session.currentOrder.discountSum;
         order.products = req.session.currentOrder.products
         //trying to save changed order
-        order.save( (err)=>{
-            if(err){
+        order.save((err) => {
+            if (err) {
                 console.warn(err);
                 req.flash('warning', 'Помилка при збереженні відредагованого замовлення');
                 return res.redirect('/');
             }
             //if no errors - looking for day balance that contains order wich we are saving
-            DayBalance.findOne({orders: req.query.id}, (err, db)=> {
-                if(err){
+            DayBalance.findOne({ orders: req.query.id }, (err, db) => {
+                if (err) {
                     console.warn(err);
                     req.flash('warning', 'Помилка при збереженні відредагованого замовлення');
                     return res.redirect('/');
@@ -351,13 +353,13 @@ router.get('/checkout', (req, res) => {
                 //if no errors - changing total sum of the day balance
                 db.totalSum += diffSum;
                 //trying to save the day balance
-                db.save( (err) => {
-                    if(err){
+                db.save((err) => {
+                    if (err) {
                         console.warn(err);
                         req.flash('warning', 'Помилка при збереженні відредагованого замовлення');
                         return res.redirect('/');
                     }
-                     //if no errors - clearing order
+                    //if no errors - clearing order
                     req.session.currentOrder = {
                         products: [],
                         sum: 0
@@ -646,48 +648,48 @@ router.get('/add-discount', (req, res) => {
 });
 
 router.get('/delete_order', (req, res) => {
-    if(!req.query.id){
+    if (!req.query.id) {
         req.flash('error', 'Не вказано ID замовлення яке необхідно видалити');
         return res.redirect('/days')
     }
     Order.findById(req.query.id, (err, order) => {
-        if(err){
+        if (err) {
             console.warn(err);
             req.flash('warning', 'Вказаний ID не знайдений у БД');
             return res.redirect('/');
         }
-        if(!order){
+        if (!order) {
             req.flash('warning', 'Вказаний ID не знайдений у БД');
             return res.redirect('/');
         }
         let removedSum = order.totalSum;
-        order.remove((err)=>{
-            if(err){
+        order.remove((err) => {
+            if (err) {
                 console.warn(err);
                 req.flash('warning', 'Помилка при збереженні відредагованого замовлення');
                 return res.redirect('/');
             }
             //if no errors - looking for day balance that contains order wich we are saving
-            DayBalance.findOne({orders: req.query.id}, (err, db)=> {
-                if(err){
+            DayBalance.findOne({ orders: req.query.id }, (err, db) => {
+                if (err) {
                     console.warn(err);
                     req.flash('warning', 'Помилка при збереженні відредагованого замовлення');
                     return res.redirect('/');
                 }
                 //if no errors - changing total sum of the day balance
                 db.totalSum -= removedSum;
-                let index = db.orders.findIndex( el => el == req.query.id);
-                if(index !== -1){
+                let index = db.orders.findIndex(el => el == req.query.id);
+                if (index !== -1) {
                     db.orders.splice(index, 1);
                 }
                 //trying to save the day balance
-                db.save( (err) => {
-                    if(err){
+                db.save((err) => {
+                    if (err) {
                         console.warn(err);
                         req.flash('warning', 'Помилка при видаленні');
                         return res.redirect('/');
                     }
-                     //if no errors - clearing order
+                    //if no errors - clearing order
                     req.session.currentOrder = {
                         products: [],
                         sum: 0
@@ -699,6 +701,42 @@ router.get('/delete_order', (req, res) => {
             });
         });
     })
+})
+
+const { exec } = require('child_process');
+const fs = require('fs');
+const iconv = require('iconv-lite'); 
+
+router.get('/print', (req, res) => {
+    console.log(`Recieved print command:\n${req.query.name}${req.query.quantity}`);
+    let printString = req.query.name.substring(0, 9)+ ':' + req.query.quantity.slice(-3);
+    while(printString.length != 13){
+        printString += ' ';
+    }
+
+    let fileBuf = fs.readFileSync('label-borders.prn');
+    let fileStr = iconv.decode(fileBuf, "cp1251").toString();
+
+    let newStr = fileStr.replace('1234567890123', printString);
+    let buf = iconv.encode(newStr, "cp1251");
+    let stream = fs.createWriteStream(`toPrint.prn`);
+    stream.write(buf);
+    stream.end();
+    exec('netsuite-print.bat toPrint.prn', (err, stdout, stderr) => {
+        if (err) {
+          // node couldn't execute the command
+          req.flash('error', 'Вибате. Не можемо надрукувати');
+          res.redirect('/');
+          return;
+          
+        }
+      
+        // the *entire* stdout and stderr (buffered)
+        console.log(`stdout: ${stdout}`);
+        console.log(`stderr: ${stderr}`);
+        res.redirect('/');
+    });
+    
 })
 
 // Exports
