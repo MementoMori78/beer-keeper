@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 
-// Product Schema
 var ProductSchema = mongoose.Schema({
     title: {
         type: String,

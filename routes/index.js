@@ -1,19 +1,29 @@
 var express = require('express');
 var router = express.Router();
-var async = require("async");
-// Get Page model
-var Page = require('../models/page');
+
 var Order = require('../models/order');
+var Transaction = require('../models/transaction');
 var Category = require('../models/category');
 var DayBalance = require('../models/dayBalance');
-var moment = require('moment');
-var iconc = require('iconv-lite');
-
-moment.locale('uk');
 var Product = require('../models/product');
-/*
- * GET /
- */
+
+var moment = require('moment');
+moment.locale('uk');
+
+
+//custom functions below
+
+function createOrderString(date) {
+    return ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ' ' + ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear();
+}
+
+function createDayBalanceHeaderString(date) {
+    return ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear();
+}
+
+
+// GETting the check-out page
+
 router.get('/', function (req, res) {
     let navClasses = {
         'cas': 'active',
@@ -79,7 +89,7 @@ router.post('/', function (req, res) {
     console.log(req.body);
     let quantity = parseFloat(req.body.quantity);
     if (!quantity || !id) {
-        req.flash('error', `bad request. sorry, can't process it`);
+        req.flash('error', `Не вказана кількість товару`);
         return res.redirect('/')
     }
     let mult = 1;
@@ -329,7 +339,7 @@ router.get('/checkout', (req, res) => {
             besides changing required fields of the order, 
             we are calculating the difference between
             new and old sum of the order. So we can further apply 
-            changes to sum of the Day Balance this order is related to 
+            changes to sum of the Day Balance wich this order is related to 
         */
         let diffSum = totalSum - order.totalSum;
         order.totalSum = totalSum;
@@ -373,13 +383,7 @@ router.get('/checkout', (req, res) => {
     })
 })
 
-function createOrderString(date) {
-    return ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ' ' + ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear();
-}
 
-function createDayBalanceHeaderString(date) {
-    return ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear();
-}
 
 router.get('/day', (req, res) => {
     let navClasses = {
@@ -507,11 +511,41 @@ router.post('/replenish', (req, res) => {
         'cas': '',
         'storage': 'active'
     }
+    const recievedReplenishValue = parseFloat(req.body.quantity);
+    if (!recievedReplenishValue || recievedReplenishValue < 0 ) {
+        req.flash('error', `Некоректне значення для поповнення`);
+        return res.redirect('balance');
+    }
     Product.findById(req.query.id, (err, product) => {
-        product.quantity += parseFloat(req.body.quantity);
+        if (err) {
+            console.log(error);
+            req.flash('error', 'Помилка при поповненні товару');
+            return res.redirect('balance');
+        }
+        product.quantity += recievedReplenishValue;
         product.save((err) => {
-            if (err) console.log(err);
-            res.redirect('balance');
+            if (err) {
+                console.log(err);
+                req.flash('error', 'Помилка при поповненні товару');
+                return res.redirect('balance')
+            }
+            let newTransaction = new Transaction({
+                productId: product._id,
+                productName: product.title,
+                type: "replenishment",
+                quantity: recievedReplenishValue,
+                previousQuantitiy: product.quantity - recievedReplenishValue
+            })
+            newTransaction.save((err) => {
+                if (!err) {
+                    req.flash('success', `Успішно додано ${recievedReplenishValue.toFixed(2)} до кількості товару "${product.title}"`)
+                    return res.redirect(`/balance`);
+                }
+                console.log(err);
+                req.flash('warning', `Не вдалось зберегти операцію, однак успішно додано ${recievedReplenishValue.toFixed(2)} до кількості товару "${product.title}". Однак .`); 
+                res.redirect(`/balance`);
+            })
+
         })
     })
 });
@@ -536,11 +570,35 @@ router.post('/write-off', (req, res) => {
         'cas': '',
         'storage': 'active'
     }
+    const recievedWriteOffValue = parseFloat(req.body.quantity);
+    if (!recievedWriteOffValue || recievedWriteOffValue < 0) {
+        res.flash('error', 'Некоректна кількість до списання');
+        return res.redirect('balance');
+    }
     Product.findById(req.query.id, (err, product) => {
-        product.quantity -= parseFloat(req.body.quantity);
+        if (err) {
+            console.log(`Error writing-off product with id ${req.query.id}: ${err}`);
+            return res.redirect('/');
+        }
+        product.quantity -= recievedWriteOffValue;
         product.save((err) => {
             if (err) console.log(err);
-            res.redirect('balance');
+            //creating transaction document
+            let newTransaction = new Transaction({
+                productId: product._id,
+                productName: product.title,
+                type: "write-off",
+                quantity: recievedWriteOffValue,
+                previousQuantitiy: product.quantity + recievedWriteOffValue
+            })
+
+            newTransaction.save((err) => {
+                if (err) {
+                    req.flash('warning', 'Помилка збереження операції');
+                    res.redirect('balance');
+                }
+                res.redirect('balance');
+            })
         })
     })
 });
@@ -703,14 +761,15 @@ router.get('/delete_order', (req, res) => {
     })
 })
 
+
 const { exec } = require('child_process');
 const fs = require('fs');
-const iconv = require('iconv-lite'); 
+const iconv = require('iconv-lite');
 
 router.get('/print', (req, res) => {
     console.log(`Recieved print command:\n${req.query.name}${req.query.quantity}`);
-    let printString = req.query.name.substring(0, 9)+ ':' + req.query.quantity.slice(-3);
-    while(printString.length != 13){
+    let printString = req.query.name.substring(0, 9) + ':' + req.query.quantity.slice(-3);
+    while (printString.length != 13) {
         printString += ' ';
     }
 
@@ -724,19 +783,17 @@ router.get('/print', (req, res) => {
     stream.end();
     exec('netsuite-print.bat toPrint.prn', (err, stdout, stderr) => {
         if (err) {
-          // node couldn't execute the command
-          req.flash('error', 'Вибате. Не можемо надрукувати');
-          res.redirect('/');
-          return;
-          
+            // node couldn't execute the command
+            req.flash('error', 'Вибачте. Не можемо надрукувати');
+            res.redirect('/');
+            return;
         }
-      
         // the *entire* stdout and stderr (buffered)
         console.log(`stdout: ${stdout}`);
         console.log(`stderr: ${stderr}`);
         res.redirect('/');
     });
-    
+
 })
 
 // Exports
