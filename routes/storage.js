@@ -41,7 +41,7 @@ router.get('/replenish', (req, res) => {
         'storage': 'active'
     }
     Product.findById(req.query.id, (err, product) => {
-        res.render('storage/replenish', {
+        res.render('replenish', {
             product: product,
             navClasses: navClasses
         })
@@ -54,7 +54,7 @@ router.post('/replenish', (req, res) => {
         'storage': 'active'
     }
     const recievedreplenishValue = parseFloat(req.body.quantity);
-    if (!recievedreplenishValue || recievedreplenishValue < 0 ) {
+    if (!recievedreplenishValue || recievedreplenishValue < 0) {
         req.flash('error', `Некоректне значення для поповнення`);
         return res.redirect('/storage/balance');
     }
@@ -84,7 +84,7 @@ router.post('/replenish', (req, res) => {
                     return res.redirect(`/balance`);
                 }
                 console.log(err);
-                req.flash('warning', `Не вдалось зберегти операцію, однак успішно додано ${recievedreplenishValue.toFixed(2)} до кількості товару "${product.title}".`); 
+                req.flash('warning', `Не вдалось зберегти операцію, однак успішно додано ${recievedreplenishValue.toFixed(2)} до кількості товару "${product.title}".`);
                 res.redirect(`/balance`);
             })
 
@@ -181,7 +181,7 @@ router.post('/edit', (req, res) => {
         product.price = parseFloat(req.body.price) ? parseFloat(req.body.price) : product.price;
         product.category = req.body.category;
         product.save((err) => {
-            if (err)  {
+            if (err) {
                 req.flash('error', `Помилка при збереженні змін у БД.`);
                 return res.redirect('/storage')
             }
@@ -217,7 +217,7 @@ router.post('/create_product', (req, res) => {
     })
 
     newProduct.save((err) => {
-        if (err)  {
+        if (err) {
             req.flash('error', `Помилка при додаванні нового товару до БД.`);
             return res.redirect('/storage')
         }

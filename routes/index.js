@@ -466,57 +466,6 @@ router.get('/days', (req, res) => {
     })
 });
 
-router.get('/create_product', (req, res) => {
-    let navClasses = {
-        'cas': '',
-        'storage': 'active'
-    }
-    Category.find({}, (err, categories) => {
-        if (err) return console.log(err);
-        res.render('create_product', {
-            categories: categories,
-            navClasses: navClasses
-        })
-    });
-});
-
-router.post('/create_product', (req, res) => {
-
-    let newProduct = new Product({
-        title: req.body.title,
-        price: parseFloat(req.body.price),
-        category: req.body.category,
-        desс: 'desc',
-        quantity: 0
-    })
-
-    newProduct.save((err) => {
-        if (err) { console.log(err); res.redirect('/storage/balance'); }
-        res.redirect('/storage/balance');
-    });
-});
-
-router.get('/create_category', (req, res) => {
-    let navClasses = {
-        'cas': '',
-        'storage': 'active'
-    }
-    res.render('create_сategory', {
-        navClasses: navClasses
-    });
-});
-
-router.post('/create_category', (req, res) => {
-    let newCategory = new Category({
-        title: req.body.title,
-    })
-
-    newCategory.save((err) => {
-        if (err) { console.log(err); res.redirect('/storage/balance'); }
-        res.redirect('/storage/balance');
-    });
-});
-
 router.get('/add-discount', (req, res) => {
     let userInput = parseInt(req.query.discount)
     if (userInput >= 0 && userInput <= 100) {
