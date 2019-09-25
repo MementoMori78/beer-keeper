@@ -1,0 +1,32 @@
+
+index: [
+    get '/' 
+    get '/clear_order'
+    get 'del_product'
+    post '/'
+    get 'check-out'
+    get 'checkout'
+    get 'print'
+    get 'add-discount'
+]
+
+storage: [
+    get 'balance' + 
+    get 'replenish' + 
+    post 'replenish' + 
+    get 'write-off' +
+    post 'write-off' + 
+    get 'edit'  +
+    post 'edit' + 
+    get 'create_product' +
+    post 'create_product' + 
+    get 'create_category' + 
+    post 'create_category' + 
+    get 'del_product_from_db' +
+]
+
+sales: [
+    get 'day'
+    get 'days'
+    get 'delete_order'
+]

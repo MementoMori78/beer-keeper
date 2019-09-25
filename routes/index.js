@@ -69,21 +69,7 @@ router.get('/del_product', function (req, res) {
     res.redirect('/');
 });
 
-router.get('/del_product_from_db', function (req, res) {
-    console.log(`GET [/del] params: id=${req.query.id}`);
-    Product.remove({ _id: req.query.id }, (err) => {
-        if (!err) {
-            console.log(`Deleted id:${req.query.id}`);
-            res.redirect('/balance');
-        } else {
-            console.log(err);
-        }
-    });
-});
 
-/*
- * POST /. Adding a product to the order
- */
 router.post('/', function (req, res) {
     let id = req.body.id;
     console.log(req.body);
@@ -175,6 +161,7 @@ router.post('/', function (req, res) {
     })
 });
 
+// Saving order to the database and decreasing quantity of the added products
 router.get('/check-out', (req, res) => {
     if (req.session.currentOrder.sum == 0) {
         res.redirect('/');
@@ -314,6 +301,7 @@ router.get('/check-out', (req, res) => {
     }
 });
 
+// Bad solution for changing existing order
 router.get('/checkout', (req, res) => {
     console.log()
     if (req.session.currentOrder.sum == 0) {
@@ -382,8 +370,6 @@ router.get('/checkout', (req, res) => {
         });
     })
 })
-
-
 
 router.get('/day', (req, res) => {
     let navClasses = {
@@ -480,163 +466,6 @@ router.get('/days', (req, res) => {
     })
 });
 
-router.get('/balance', (req, res) => {
-    let navClasses = {
-        'cas': '',
-        'storage': 'active'
-    }
-    Product.find({}, (err, products) => {
-        res.render('balance', {
-            products: products,
-            navClasses: navClasses
-        })
-    })
-});
-
-router.get('/replenish', (req, res) => {
-    let navClasses = {
-        'cas': '',
-        'storage': 'active'
-    }
-    Product.findById(req.query.id, (err, product) => {
-        res.render('replenish', {
-            product: product,
-            navClasses: navClasses
-        })
-    })
-});
-
-router.post('/replenish', (req, res) => {
-    let navClasses = {
-        'cas': '',
-        'storage': 'active'
-    }
-    const recievedReplenishValue = parseFloat(req.body.quantity);
-    if (!recievedReplenishValue || recievedReplenishValue < 0 ) {
-        req.flash('error', `Некоректне значення для поповнення`);
-        return res.redirect('balance');
-    }
-    Product.findById(req.query.id, (err, product) => {
-        if (err) {
-            console.log(error);
-            req.flash('error', 'Помилка при поповненні товару');
-            return res.redirect('balance');
-        }
-        product.quantity += recievedReplenishValue;
-        product.save((err) => {
-            if (err) {
-                console.log(err);
-                req.flash('error', 'Помилка при поповненні товару');
-                return res.redirect('balance')
-            }
-            let newTransaction = new Transaction({
-                productId: product._id,
-                productName: product.title,
-                type: "replenishment",
-                quantity: recievedReplenishValue,
-                previousQuantitiy: product.quantity - recievedReplenishValue
-            })
-            newTransaction.save((err) => {
-                if (!err) {
-                    req.flash('success', `Успішно додано ${recievedReplenishValue.toFixed(2)} до кількості товару "${product.title}"`)
-                    return res.redirect(`/balance`);
-                }
-                console.log(err);
-                req.flash('warning', `Не вдалось зберегти операцію, однак успішно додано ${recievedReplenishValue.toFixed(2)} до кількості товару "${product.title}". Однак .`); 
-                res.redirect(`/balance`);
-            })
-
-        })
-    })
-});
-
-
-
-router.get('/write-off', (req, res) => {
-    let navClasses = {
-        'cas': '',
-        'storage': 'active'
-    }
-    Product.findById(req.query.id, (err, product) => {
-        res.render('write_off', {
-            product: product,
-            navClasses: navClasses
-        })
-    })
-});
-
-router.post('/write-off', (req, res) => {
-    let navClasses = {
-        'cas': '',
-        'storage': 'active'
-    }
-    const recievedWriteOffValue = parseFloat(req.body.quantity);
-    if (!recievedWriteOffValue || recievedWriteOffValue < 0) {
-        res.flash('error', 'Некоректна кількість до списання');
-        return res.redirect('balance');
-    }
-    Product.findById(req.query.id, (err, product) => {
-        if (err) {
-            console.log(`Error writing-off product with id ${req.query.id}: ${err}`);
-            return res.redirect('/');
-        }
-        product.quantity -= recievedWriteOffValue;
-        product.save((err) => {
-            if (err) console.log(err);
-            //creating transaction document
-            let newTransaction = new Transaction({
-                productId: product._id,
-                productName: product.title,
-                type: "write-off",
-                quantity: recievedWriteOffValue,
-                previousQuantitiy: product.quantity + recievedWriteOffValue
-            })
-
-            newTransaction.save((err) => {
-                if (err) {
-                    req.flash('warning', 'Помилка збереження операції');
-                    res.redirect('balance');
-                }
-                res.redirect('balance');
-            })
-        })
-    })
-});
-
-router.get('/edit', (req, res) => {
-    let navClasses = {
-        'cas': '',
-        'storage': 'active'
-    }
-    Product.findById(req.query.id, (err, product) => {
-        if (err) return console.log(err);
-        Category.find({}, (err, categories) => {
-            if (err) return console.log(err);
-            res.render('edit', {
-                categories: categories,
-                product: product,
-                navClasses: navClasses
-            })
-        });
-    })
-});
-
-router.post('/edit', (req, res) => {
-    let navClasses = {
-        'cas': '',
-        'storage': 'active'
-    }
-    Product.findById(req.query.id, (err, product) => {
-        product.title = (req.body.title) ? req.body.title : product.title;
-        product.price = parseFloat(req.body.price) ? parseFloat(req.body.price) : product.price;
-        product.category = req.body.category;
-        product.save((err) => {
-            if (err) console.log(err);
-            res.redirect('balance');
-        });
-    });
-});
-
 router.get('/create_product', (req, res) => {
     let navClasses = {
         'cas': '',
@@ -662,8 +491,8 @@ router.post('/create_product', (req, res) => {
     })
 
     newProduct.save((err) => {
-        if (err) { console.log(err); res.redirect('/balance'); }
-        res.redirect('balance');
+        if (err) { console.log(err); res.redirect('/storage/balance'); }
+        res.redirect('/storage/balance');
     });
 });
 
@@ -683,8 +512,8 @@ router.post('/create_category', (req, res) => {
     })
 
     newCategory.save((err) => {
-        if (err) { console.log(err); res.redirect('/balance'); }
-        res.redirect('balance');
+        if (err) { console.log(err); res.redirect('/storage/balance'); }
+        res.redirect('/storage/balance');
     });
 });
 

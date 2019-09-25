@@ -28,15 +28,15 @@
                     <td><%= p.category %></td>
                     <td><%= p.price %></td>
                     <td>
-                        <a href="/replenish?id=<%=p._id%>">
+                        <a href="/storage/replenish?id=<%=p._id%>">
                             <button type="button" class="btn btn-outline-success btn-sm"
-                                href="/replenish?id=<%=p._id%>">
+                                href="/storage/replenish?id=<%=p._id%>">
                                 +
                             </button>
                         </a>
                     </td>
                     <td>
-                        <a href="/write-off?id=<%=p._id%>">
+                        <a href="/storage/write-off?id=<%=p._id%>">
                             <button type="button" class="btn btn-outline-danger btn-sm">
                                 -
                             </button>
@@ -50,7 +50,7 @@
                         </a>
                     </td>
                     <td>
-                        <a href="/del_product_from_db?id=<%=p._id%>" class="confirmDeletion">
+                        <a href="/storage/del_product_from_db?id=<%=p._id%>" class="confirmDeletion">
                             <button type="button" class="btn btn-danger btn-sm"">
                                 Видалити
                             </button>

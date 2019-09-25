@@ -149,20 +149,11 @@ app.post('*', function (req, res, next) {
 
 // Set routes 
 var index = require('./routes/index.js');
-var products = require('./routes/products.js');
-var cart = require('./routes/cart.js');
-var users = require('./routes/users.js');
-var adminPages = require('./routes/admin_pages.js');
-var adminCategories = require('./routes/admin_categories.js');
-var adminProducts = require('./routes/admin_products.js');
-
-app.use('/admin/pages', adminPages);
-app.use('/admin/categories', adminCategories);
-app.use('/admin/products', adminProducts);
-app.use('/products', products);
-app.use('/cart', cart);
-app.use('/users', users);
+var storage = require('./routes/storage.js');
+// Add imported routes to the app
 app.use('/', index);
+app.use('/storage/', storage);  
+
 
 // Start the server
 var port = 3000;
