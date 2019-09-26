@@ -26,7 +26,7 @@ storage: [
 ]
 
 sales: [
-    get 'day'
-    get 'days'
-    get 'delete_order'
+    get 'day' + 
+    get 'days' + 
+    get 'delete_order' + 
 ]

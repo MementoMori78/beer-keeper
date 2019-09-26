@@ -150,9 +150,11 @@ app.post('*', function (req, res, next) {
 // Set routes 
 var index = require('./routes/index.js');
 var storage = require('./routes/storage.js');
+var sales = require('./routes/sales.js');
 // Add imported routes to the app
 app.use('/', index);
-app.use('/storage/', storage);  
+app.use('/storage', storage);  
+app.use('/sales', sales);
 
 
 // Start the server

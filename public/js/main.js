@@ -35,7 +35,7 @@ $(document).ready(function () {
             else {
                 $(this).hide();
             }
-            if (!value && window.location.href != "http://localhost:3000/balance" && window.location.href != "http://localhost:3000/days" ) { 
+            if (!value && window.location.href != "http://localhost:3000/balance" && window.location.href != "http://localhost:3000/sales" ) { 
                 $(this).hide(); 
             }
         });

@@ -1,6 +1,6 @@
 <% include _layouts/header %>
 <div class="row">
-    <h3>Денні звіти</h3>
+    <h3>Потижнева виручка</h3>
 </div>
 <div class="row">
     <div class="col-12">
@@ -8,6 +8,9 @@
 
         </div>
     </div>
+</div>
+<div class="row">
+    <h3>Денні звіти</h3>
 </div>
 <div class="row">
     <!-- Tab panes -->
@@ -32,7 +35,7 @@
                     <td><%= db.orders.length %></td>
                     <td><%= (db.totalSum / db.orders.length).toFixed(2)%></td>
                     <td>
-                        <a href="/day?id=<%=db.id%>" class="btn btn-outline-primary btn-sm">
+                        <a href="/sales/day?id=<%=db.id%>" class="btn btn-outline-primary btn-sm">
                             Чеки
                         </a>
                     </td>
