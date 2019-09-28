@@ -132,6 +132,7 @@ table.alignmiddle td {
     animation: glow 1s ease-in-out infinite alternate;
   }
   
+
   @-webkit-keyframes glow {
     from {
         text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px rgb(255, 255, 255), 0 0 70px rgb(255, 255, 255), 0 0 80px rgb(255, 255, 255), 0 0 100px rgb(255, 255, 255), 0 0 150px rgb(255, 255, 255);
@@ -140,3 +141,38 @@ table.alignmiddle td {
         text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px rgb(0, 255, 0), 0 0 35px rgb(43, 255, 0), 0 0 40px rgb(21, 255, 0), 0 0 50px rgb(9, 255, 0), 0 0 75px rgb(0, 255, 34);
       }
   }
+
+  h3 {
+    padding-top : 10px;
+    padding-bottom : 20px;
+  }
+
+ul.trn-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+li.trn-item {
+    padding: 10px;
+    padding-left: 20px;
+    margin-bottom: 5px;
+    /* border: 1px solid #69696941; */
+    border-radius: 23px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+li.trn-item-top {
+    background-color: rgba(30, 255, 0, 0.255)
+}
+
+li.trn-item-down {
+    background-color: #ff5d5d2a
+}
+
+div.trn-item-price>img{
+    height: 16px;
+    width: 16px;
+}

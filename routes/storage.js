@@ -250,5 +250,27 @@ router.post('/create_category', (req, res) => {
     });
 });
 
+router.get('/product', (req, res) => {
+    let navClasses = {
+        'cas': '',
+        'storage': 'active'
+    }
+    if(!req.query.id){
+        req.flash('error', 'Не вказаний ID товару для перегляду')
+        return res.redirect('/storage')
+    }
+    Product.findById(req.query.id, (err, product) => {
+        if(err) {
+            console.log(err);
+            req.flash('error', 'Помилка при пошуку товару за вказаним ID у БД');
+            return res.redirect('/storage') 
+        }
+        res.render('product', {
+            navClasses: navClasses,
+            productInfo: product
+        })
+    })
+})
+
 // Exports
 module.exports = router;

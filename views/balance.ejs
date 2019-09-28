@@ -1,6 +1,6 @@
 <% include _layouts/header %>
 <div class="row">
-    <h3>Баланс товару</h3>
+    <h3>Облік товару</h3>
 </div>
 <div class="row">
     <!-- Tab panes -->
@@ -21,7 +21,7 @@
             <tbody id="products_table">
                 <% products.forEach(function(p){ %>
                 <tr class="content">
-                    <td scope="row"><%= p.title %></td>
+                    <td scope="row"> <a href="/storage/product?id=<%=p._id%>" ><%= p.title %></a></td>
                     <td>
                         <h6><%= p.quantity.toFixed(2) %></h6>
                     </td>
@@ -43,8 +43,8 @@
                         </a>
                     </td>
                     <td>
-                        <a href="/edit?id=<%=p._id%>">
-                            <button type="button" class="btn btn-outline-warning btn-sm" href="/edit?id=<%=p._id%>">
+                        <a href="/storage/edit?id=<%=p._id%>">
+                            <button type="button" class="btn btn-outline-warning btn-sm" >
                                 Редагувати
                             </button>
                         </a>

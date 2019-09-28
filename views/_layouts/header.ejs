@@ -25,7 +25,7 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="/sales">Денні звіти</a>
-                        <a class="dropdown-item" href="/storage">Баланс товару</a>
+                        <a class="dropdown-item" href="/storage">Облік товару</a>
                         <a class="dropdown-item" href="/storage/create_product">Додати новий продукт</a>
                         <a class="dropdown-item" href="/storage/create_category">Створити категорію</a>
                     </div>
@@ -41,7 +41,6 @@
                 <% if (errors) {%>
                     <% errors.forEach(function(error) { %>
                         <div class="alert alert-danger">
-                            <%= error.msg %>
                         </div>
                     <% });%>
                 <% }%>
