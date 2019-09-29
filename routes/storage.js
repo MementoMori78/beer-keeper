@@ -56,36 +56,39 @@ router.post('/replenish', (req, res) => {
     const recievedreplenishValue = parseFloat(req.body.quantity);
     if (!recievedreplenishValue || recievedreplenishValue < 0) {
         req.flash('error', `Некоректне значення для поповнення`);
-        return res.redirect('/storage/balance');
+        return res.redirect('/storage');
     }
     Product.findById(req.query.id, (err, product) => {
         if (err) {
             console.log(error);
             req.flash('error', 'Помилка при поповненні товару');
-            return res.redirect('/storage/balance');
+            return res.redirect('/storage');
         }
         product.quantity += recievedreplenishValue;
         product.save((err) => {
             if (err) {
                 console.log(err);
                 req.flash('error', 'Помилка при поповненні товару');
-                return res.redirect('balance')
+                return res.redirect('/storage')
             }
+            let costToSave = parseFloat(req.body.cost) ? parseFloat(req.body.cost) : 0;
             let newTransaction = new Transaction({
                 productId: product._id,
                 productName: product.title,
                 type: "replenishment",
                 quantity: recievedreplenishValue,
-                previousQuantitiy: product.quantity - recievedreplenishValue
+                previousQuantity: product.quantity - recievedreplenishValue, 
+                cost: costToSave,
+                provider: req.body.provider
             })
             newTransaction.save((err) => {
                 if (!err) {
                     req.flash('success', `Успішно додано ${recievedreplenishValue.toFixed(2)} до кількості товару "${product.title}"`)
-                    return res.redirect(`/balance`);
+                    return res.redirect(`/storage`);
                 }
                 console.log(err);
                 req.flash('warning', `Не вдалось зберегти операцію, однак успішно додано ${recievedreplenishValue.toFixed(2)} до кількості товару "${product.title}".`);
-                res.redirect(`/balance`);
+                res.redirect(`/storage`);
             })
 
         })
@@ -129,14 +132,15 @@ router.post('/write-off', (req, res) => {
                 productName: product.title,
                 type: "write-off",
                 quantity: recievedWriteOffValue,
-                previousQuantitiy: product.quantity + recievedWriteOffValue
+                previousQuantity: product.quantity + recievedWriteOffValue
             })
-
             newTransaction.save((err) => {
                 if (err) {
+                    console.log(err)
                     req.flash('warning', 'Помилка збереження операції');
-                    res.redirect('/storage');
+                    return res.redirect('/storage');
                 }
+                req.flash('success', `Успішно списано ${recievedWriteOffValue.toFixed(2)} з кількості товару "${product.title}"`)
                 res.redirect('/storage');
             })
         })
@@ -255,20 +259,32 @@ router.get('/product', (req, res) => {
         'cas': '',
         'storage': 'active'
     }
-    if(!req.query.id){
+    if (!req.query.id) {
         req.flash('error', 'Не вказаний ID товару для перегляду')
         return res.redirect('/storage')
     }
     Product.findById(req.query.id, (err, product) => {
-        if(err) {
+        if (err) {
             console.log(err);
             req.flash('error', 'Помилка при пошуку товару за вказаним ID у БД');
-            return res.redirect('/storage') 
+            return res.redirect('/storage')
         }
-        res.render('product', {
-            navClasses: navClasses,
-            productInfo: product
-        })
+        Transaction.find({ productId: req.query.id }, (err, _transactions) => {
+            if (err) {
+                console.log(err);
+                req.flash('error', 'Помилка при пошуку операцій по даному товару');
+                return res.redirect('/storage');
+            }
+            _transactions.sort( (a, b) => {
+                return new Date(b.date) - new Date(a.date); 
+            })
+            res.render('product', {
+                moment: moment,
+                navClasses: navClasses,
+                productInfo: product,
+                transactions: _transactions
+            });
+        });
     })
 })
 

@@ -7,12 +7,16 @@ var TransactionSchema = mongoose.Schema({
         type: ObjectId, 
         required: true
     },
+    orderId: {
+        type: ObjectId,
+        required: false
+    },
     productName: {
         type: String,
         required: false
     },
     type: {
-        type: String, // income, write-off
+        type: String, // income, write-off, sale
         required: true
     }, 
     date: { 
@@ -24,13 +28,17 @@ var TransactionSchema = mongoose.Schema({
         default: 0,
         required: true
     },
-    previousQuantitiy: {
+    previousQuantity: {
         type: Number
     },
-    aditional: {
-        type: Object,
-        requried: false
-    }    
+    cost: {
+        type: Number,
+        default: 0
+    },
+    provider: {
+        type: String,
+        default: 'Постачальник не вказаний'
+    }
 });
 
 var Transaction = module.exports = mongoose.model('Transaction', TransactionSchema);

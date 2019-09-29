@@ -183,13 +183,7 @@ router.get('/check-out', (req, res) => {
                 quantityToDecreaseByProduct[product._id] = product.quantity;
             }
         });
-        Object.getOwnPropertyNames(quantityToDecreaseByProduct).forEach((productID) => {
-            Product.findById(productID, (err, product) => {
-                if (err) { console.log(`Помилка при зменшенні кількості продукта: ${err}`); return; }
-                product.quantity -= quantityToDecreaseByProduct[productID];
-                product.save();
-            })
-        });
+
         let orderDate = new Date();
         let headline = createOrderString(orderDate);
         let totalSum = req.session.currentOrder.discount ? req.session.currentOrder.discountSum : req.session.currentOrder.sum;
@@ -208,6 +202,23 @@ router.get('/check-out', (req, res) => {
                 console.log(err);
                 return res.redirect('/');
             }
+            Object.getOwnPropertyNames(quantityToDecreaseByProduct).forEach((productID) => {
+                Product.findById(productID, (err, product) => {
+                    if (err) { console.log(`Помилка при зменшенні кількості продукта: ${err}`); return; }
+                    let newTransaction = new Transaction({
+                        productId: productID,
+                        productName: product.title,
+                        type: "sale",
+                        quantity: quantityToDecreaseByProduct[productID],
+                        previousQuantity: product.quantity,
+                        orderId: orderSaved._id
+                    });
+                    product.quantity -= quantityToDecreaseByProduct[productID];
+                    product.save();
+                    newTransaction.save();
+                });
+            });
+            req.flash('success', "Замовлення успішно збережено");
             //checking if dayBalance exists
             DayBalance.find({}, (err, days) => {
                 //if dayBalances exist at all

@@ -44,79 +44,58 @@
         </ul>
     </div>
     <div class="col-sm-8">
+        <% if(!transactions.length) { %>
+        <h6> Для даного товару відсутні збережені операції</h6>
+        <% } %>
         <ul class="trn-list">
+            <% transactions.forEach(transaction => { %>
+            <% if(transaction.type == "replenishment") { %>
             <li class="trn-item trn-item-top">
                 <div class="trn-item-price">
-                    <img src="/images/svg/chevron-top.svg">
-                    <span>50.00&nbsp;₴</span>
+                    <div class="chevron-container">
+                        <img src="/images/svg/chevron-top.svg" class="trn-icon-img">
+                    </div>
+                    <span> <%= transaction.quantity.toFixed(2) %> (<%= transaction.previousQuantity.toFixed(2) %>
+                        )</span>
                 </div>
-                <span>12.09.2019 14:31</span>
-                <span>ТОВ "Експедитор"</span>
+                <div class="divider"></div>
+                <span>
+                    <%= transaction.cost ? `${transaction.cost.toFixed(2)} ₴` : "Вартість не вказана" %>
+                </span>
+                <div class="divider"></div>
+                <span> <%= moment(transaction.date).format('DD.MM.YY HH:mm') %> </span>
+                <div class="divider"></div>
+                <span> <%= transaction.provider ? transaction.provider : "Постачальник не вказаний" %> </span>
             </li>
+            <% } else if(transaction.type == "write-off") { %>
             <li class="trn-item trn-item-down">
                 <div class="trn-item-price">
-                    <img src="/images/svg/chevron-bottom.svg">
-                    <span>50.00&nbsp;₴</span>
+                    <div class="chevron-container">
+                        <img src="/images/svg/chevron-bottom.svg" class="trn-icon-img">
+                    </div>
+                    <span> <%= transaction.quantity.toFixed(2) %> (<%= transaction.previousQuantity.toFixed(2) %>
+                        )</span>
                 </div>
-                <span>12.09.2019 14:31</span>
-                <span>ТОВ "Експедитор"</span>
+                <div class="divider"></div>
+                <span><%= `${(0 - productInfo.price * transaction.quantity).toFixed(2)} ₴` %></span>
+                <div class="divider"></div>
+                <span><%= moment(transaction.date).format('DD.MM.YY HH:mm') %> </span>
             </li>
-            <li class="trn-item trn-item-top">
+            <% } else if(transaction.type == "sale") { %>
+            <li class="trn-item trn-item-sale">
                 <div class="trn-item-price">
-                    <img src="/images/svg/chevron-top.svg">
-                    <span>50.00&nbsp;₴</span>
+                    <div class="chevron-container">
+                        <img src="/images/svg/chevron-bottom.svg" class="trn-icon-img">
+                    </div>
+                    <span> <%= transaction.quantity.toFixed(2) %> (<%= transaction.previousQuantity.toFixed(2) %>
+                        )</span>
                 </div>
-                <span>12.09.2019 14:31</span>
-                <span>ТОВ "Експедитор"</span>
+                <div class="divider"></div>
+                <a href="/sales/order?id=<%=transaction.orderId%>"><span><%= moment(transaction.date).format('DD.MM.YY HH:mm') %>
+                    </span></a>
             </li>
-            <li class="trn-item trn-item-down">
-                <div class="trn-item-price">
-                    <img src="/images/svg/chevron-bottom.svg">
-                    <span>50.00&nbsp;₴</span>
-                </div>
-                <span>12.09.2019 14:31</span>
-                <span>ТОВ "Експедитор"</span>
-            </li>
-            <li class="trn-item trn-item-down">
-                <div class="trn-item-price">
-                    <img src="/images/svg/chevron-bottom.svg">
-                    <span>50.00&nbsp;₴</span>
-                </div>
-                <span>12.09.2019 14:31</span>
-                <span>ТОВ "Експедитор"</span>
-            </li>
-            <li class="trn-item trn-item-top">
-                <div class="trn-item-price">
-                    <img src="/images/svg/chevron-top.svg">
-                    <span>50.00&nbsp;₴</span>
-                </div>
-                <span>12.09.2019 14:31</span>
-                <span>ТОВ "Експедитор"</span>
-            </li>
-            <li class="trn-item trn-item-top">
-                <div class="trn-item-price">
-                    <img src="/images/svg/chevron-top.svg">
-                    <span>50.00&nbsp;₴</span>
-                </div>
-                <span>12.09.2019 14:31</span>
-                <span>ТОВ "Експедитор"</span>
-            </li>
-            <li class="trn-item trn-item-top">
-                <div class="trn-item-price">
-                    <img src="/images/svg/chevron-top.svg">
-                    <span>50.00&nbsp;₴</span>
-                </div>
-                <span>12.09.2019 14:31</span>
-                <span>ТОВ "Експедитор"</span>
-            </li>
-            <li class="trn-item trn-item-down">
-                <div class="trn-item-price">
-                    <img src="/images/svg/chevron-bottom.svg">
-                    <span>50.00&nbsp;₴</span>
-                </div>
-                <span>12.09.2019 14:31</span>
-                <span>ТОВ "Експедитор"</span>
-            </li>
+            <% } %>
+            <% }); %>
         </ul>
     </div>
 </div>

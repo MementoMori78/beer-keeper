@@ -154,11 +154,12 @@ ul.trn-list {
 }
 
 li.trn-item {
-    padding: 10px;
-    padding-left: 20px;
+    padding: 5px;
+    padding-left: 5px;
+    padding-right: 20px;
     margin-bottom: 5px;
-    /* border: 1px solid #69696941; */
-    border-radius: 23px;
+    border: 1px solid #69696941; 
+    border-radius: 20px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -171,8 +172,32 @@ li.trn-item-top {
 li.trn-item-down {
     background-color: #ff5d5d2a
 }
+li.trn-item-sale {
+    background-color: #0026ff2a
+}
 
-div.trn-item-price>img{
+img.trn-icon-img {
     height: 16px;
     width: 16px;
 }
+
+div.chevron-container {
+    display: inline-block;
+    
+    border-radius: 14px;
+    padding: 6px;
+}
+li.trn-item-top>div>div {
+    background-color: rgba(30, 255, 0, 0.255)
+}
+li.trn-item-down>div>div {
+    background-color: #ff5d5d2a
+}
+li.trn-item-sale>div>div {
+    background-color: #0026ff2a
+}
+
+.divider {
+    width: 1px;
+    background: rgba(0, 0, 0, 0.267);
+  }
