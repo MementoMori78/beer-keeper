@@ -1,19 +1,24 @@
 <% include _layouts/header %>
 <div class="row">
-    <h3>Списання</h3>
+    <div class="col-12">
+        <h3>Списання</h3>
+    </div>
 </div>
 <div class="row">
-<div class="row">
-    <form action="/storage/write-off?id=<%=product._id%>" method="post">
-        <div class="form-group">
-            <label for="title">Назва</label>
-            <input type="email" class="form-control" id="title" aria-describedby="emailHelp" placeholder="<%=product.title%>"disabled>
-        </div>
-        <div class="form-group">
-            <label for="quantity">Кількість</label>
-            <input required type="number" class="form-control" id="quantity" name="quantity" placeholder="0.00" min='0' step='0.001'>
-        </div>
-        <button type="submit" class="btn btn-danger">Cписати</button>
-</form>
+    <div class="col-12">
+        <form action="/storage/write-off?id=<%=product._id%>" method="post">
+            <div class="form-group">
+                <label for="title">Назва</label>
+                <input type="email" class="form-control" id="title" aria-describedby="emailHelp"
+                    placeholder="<%=product.title%>" disabled>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Кількість</label>
+                <input required type="number" class="form-control" id="quantity" name="quantity" placeholder="0.00"
+                    min='0' step='0.001'>
+            </div>
+            <button type="submit" class="btn btn-danger">Cписати</button>
+        </form>
+    </div>
 </div>
 <% include _layouts/footer %>

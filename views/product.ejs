@@ -63,9 +63,10 @@
                     <%= transaction.cost ? `${transaction.cost.toFixed(2)} ₴` : "Вартість не вказана" %>
                 </span>
                 <div class="divider"></div>
-                <span> <%= moment(transaction.date).format('DD.MM.YY HH:mm') %> </span>
-                <div class="divider"></div>
                 <span> <%= transaction.provider ? transaction.provider : "Постачальник не вказаний" %> </span>
+                <div class="divider"></div>
+                <span> <%= moment(transaction.date).format('DD.MM.YY HH:mm') %> </span>
+                
             </li>
             <% } else if(transaction.type == "write-off") { %>
             <li class="trn-item trn-item-down">
@@ -97,6 +98,43 @@
             <% } %>
             <% }); %>
         </ul>
+        <% if(transactions.length) { %>
+        
+        
+        <nav>
+            <ul class="pagination">
+                <% const pathPart = `/storage/product?id=${productInfo._id}`%>
+                <% if(pagination.currPage == 1) {%>
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Попередня</a>
+                    </li>
+                <% } else { %>
+                    <li class="page-item">
+                        <a class="page-link" href="<%=`${pathPart}&page=${pagination.currPage - 1}`%>" tabindex="-1">Попередня</a>
+                    </li>
+                <% } %>
+                <% for(let i = 1; i <= pagination.pagesCount; i++) { %>
+                    <% if(pagination.currPage == i) {%>
+                        <li class="page-item active">
+                            <a class="page-link" href="#"><%=i%></a>
+                        </li>
+                    <% } else { %>
+                        <li class="page-item"><a class="page-link" href="<%=`${pathPart}&page=${i}`%>"><%=i%></a></li>
+                    <% } %>
+                <% } %>
+
+                <% if(pagination.currPage == pagination.pagesCount) {%>
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Наступна</a>
+                    </li>
+                <% } else { %>
+                    <li class="page-item">
+                        <a class="page-link" href="<%=`${pathPart}&page=${pagination.currPage + 1}`%>">Наступна</a>
+                    </li>
+                <% } %>
+            </ul>
+        </nav>
+        <% } %>
     </div>
 </div>
 

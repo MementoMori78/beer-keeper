@@ -77,7 +77,7 @@ router.post('/replenish', (req, res) => {
                 productName: product.title,
                 type: "replenishment",
                 quantity: recievedreplenishValue,
-                previousQuantity: product.quantity - recievedreplenishValue, 
+                previousQuantity: product.quantity - recievedreplenishValue,
                 cost: costToSave,
                 provider: req.body.provider
             })
@@ -255,6 +255,7 @@ router.post('/create_category', (req, res) => {
 });
 
 router.get('/product', (req, res) => {
+
     let navClasses = {
         'cas': '',
         'storage': 'active'
@@ -275,14 +276,28 @@ router.get('/product', (req, res) => {
                 req.flash('error', 'Помилка при пошуку операцій по даному товару');
                 return res.redirect('/storage');
             }
-            _transactions.sort( (a, b) => {
-                return new Date(b.date) - new Date(a.date); 
+            _transactions.sort((a, b) => {
+                return new Date(b.date) - new Date(a.date);
             })
+            const pagingSize = 10
+            const pagination = {
+                pagingSize: pagingSize,
+                pagesCount: Math.ceil(_transactions.length / pagingSize)
+            }
+            if(!parseInt(req.query.page)){
+                pagination.currPage = 1;
+            } else if (parseInt(req.query.page) < 1 || parseInt(req.query.page) > pagination.pagesCount) {
+                pagination.currPage = 1;
+            } else {
+                pagination.currPage = parseInt(req.query.page);
+            }
+            const trnToSend = _transactions.splice((pagination.currPage - 1) * pagination.pagingSize, pagination.pagingSize)
             res.render('product', {
                 moment: moment,
                 navClasses: navClasses,
-                productInfo: product,
-                transactions: _transactions
+                productInfo: product,   
+                transactions: trnToSend,
+                pagination: pagination
             });
         });
     })
