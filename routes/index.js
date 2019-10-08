@@ -412,7 +412,7 @@ router.get('/print', (req, res) => {
         printString += ' ';
     }
 
-    let fileBuf = fs.readFileSync('label-borders.prn');
+    let fileBuf = fs.readFileSync('D:/beer-keeper-test/beer-keeper/label-borders.prn');
     let fileStr = iconv.decode(fileBuf, "cp1251").toString();
 
     let newStr = fileStr.replace('1234567890123', printString);
@@ -420,7 +420,7 @@ router.get('/print', (req, res) => {
     let stream = fs.createWriteStream(`toPrint.prn`);
     stream.write(buf);
     stream.end();
-    exec('netsuite-print.bat toPrint.prn', (err, stdout, stderr) => {
+    exec('D:/beer-keeper-test/beer-keeper/netsuite-print.bat toPrint.prn', (err, stdout, stderr) => {
         if (err) {
             // node couldn't execute the command
             req.flash('error', 'Вибачте. Не можемо надрукувати');
