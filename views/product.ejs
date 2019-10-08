@@ -1,141 +1,149 @@
 <% include _layouts/header %>
-<div class="row">
-    <h1>
-        <%= productInfo.title %>
-    </h1>
-</div>
+    <div class="row">
+        <div class="col-12">
+            <h1>
+                <%= productInfo.title %>
+            </h1>
+        </div>
+    </div>
 
-<div class="row">
-    <div class="col-sm-4">
-        <ul class="list-group">
-            <li class="list-group-item d-flex justify-content-between">
-                <div>
-                    <b>Категорія</b>
-                </div>
-                <span>
+    <div class="row">
+        <div class="col-sm-4">
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between">
+                    <div>
+                        <b>Категорія</b>
+                    </div>
+                    <span>
                     <%= productInfo.category %>
                 </span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
-                <div>
-                    <b>Вартість</b>
-                </div>
-                <span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <div>
+                        <b>Вартість</b>
+                    </div>
+                    <span>
                     <%= productInfo.price %>&nbsp;₴
                 </span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
-                <div>
-                    <b>Собівартість</b>
-                </div>
-                <span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <div>
+                        <b>Собівартість</b>
+                    </div>
+                    <span>
                     TODO
                 </span>
-            </li>
+                </li>
 
-            <li class="list-group-item d-flex justify-content-between">
-                <div>
-                    <b>Залишок</b>
-                </div>
-                <span>
+                <li class="list-group-item d-flex justify-content-between">
+                    <div>
+                        <b>Залишок</b>
+                    </div>
+                    <span>
                     <%= productInfo.quantity.toFixed(2) %>
                 </span>
-            </li>
-        </ul>
-    </div>
-    <div class="col-sm-8">
-        <% if(!transactions.length) { %>
-        <h6> Для даного товару відсутні збережені операції</h6>
-        <% } %>
-        <ul class="trn-list">
-            <% transactions.forEach(transaction => { %>
-            <% if(transaction.type == "replenishment") { %>
-            <li class="trn-item trn-item-top">
-                <div class="trn-item-price">
-                    <div class="chevron-container">
-                        <img src="/images/svg/chevron-top.svg" class="trn-icon-img">
-                    </div>
-                    <span> <%= transaction.quantity.toFixed(2) %> (<%= transaction.previousQuantity.toFixed(2) %>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-8">
+            <% if(!transactions.length) { %>
+                <h6> Для даного товару відсутні збережені операції</h6>
+                <% } %>
+                    <ul class="trn-list">
+                        <% transactions.forEach(transaction => { %>
+                            <% if(transaction.type == "replenishment") { %>
+                                <li class="trn-item trn-item-top">
+                                    <div class="trn-item-price">
+                                        <div class="chevron-container">
+                                            <img src="/images/svg/chevron-top.svg" class="trn-icon-img">
+                                        </div>
+                                        <span> <%= transaction.quantity.toFixed(2) %> (<%= transaction.previousQuantity.toFixed(2) %>
                         )</span>
-                </div>
-                <div class="divider"></div>
-                <span>
+                                    </div>
+                                    <div class="divider"></div>
+                                    <span>
                     <%= transaction.cost ? `${transaction.cost.toFixed(2)} ₴` : "Вартість не вказана" %>
                 </span>
-                <div class="divider"></div>
-                <span> <%= transaction.provider ? transaction.provider : "Постачальник не вказаний" %> </span>
-                <div class="divider"></div>
-                <span> <%= moment(transaction.date).format('DD.MM.YY HH:mm') %> </span>
-                
-            </li>
-            <% } else if(transaction.type == "write-off") { %>
-            <li class="trn-item trn-item-down">
-                <div class="trn-item-price">
-                    <div class="chevron-container">
-                        <img src="/images/svg/chevron-bottom.svg" class="trn-icon-img">
-                    </div>
-                    <span> <%= transaction.quantity.toFixed(2) %> (<%= transaction.previousQuantity.toFixed(2) %>
+                                    <div class="divider"></div>
+                                    <span> <%= transaction.provider ? transaction.provider : "Постачальник не вказаний" %> </span>
+                                    <div class="divider"></div>
+                                    <span> <%= moment(transaction.date).format('DD.MM.YY HH:mm') %> </span>
+
+                                </li>
+                                <% } else if(transaction.type == "write-off") { %>
+                                    <li class="trn-item trn-item-down">
+                                        <div class="trn-item-price">
+                                            <div class="chevron-container">
+                                                <img src="/images/svg/chevron-bottom.svg" class="trn-icon-img">
+                                            </div>
+                                            <span> <%= transaction.quantity.toFixed(2) %> (<%= transaction.previousQuantity.toFixed(2) %>
                         )</span>
-                </div>
-                <div class="divider"></div>
-                <span><%= `${(0 - productInfo.price * transaction.quantity).toFixed(2)} ₴` %></span>
-                <div class="divider"></div>
-                <span><%= moment(transaction.date).format('DD.MM.YY HH:mm') %> </span>
-            </li>
-            <% } else if(transaction.type == "sale") { %>
-            <li class="trn-item trn-item-sale">
-                <div class="trn-item-price">
-                    <div class="chevron-container">
-                        <img src="/images/svg/chevron-bottom.svg" class="trn-icon-img">
-                    </div>
-                    <span> <%= transaction.quantity.toFixed(2) %> (<%= transaction.previousQuantity.toFixed(2) %>
+                                        </div>
+                                        <div class="divider"></div>
+                                        <span><%= `${(0 - productInfo.price * transaction.quantity).toFixed(2)} ₴` %></span>
+                                        <div class="divider"></div>
+                                        <span><%= moment(transaction.date).format('DD.MM.YY HH:mm') %> </span>
+                                    </li>
+                                    <% } else if(transaction.type == "sale") { %>
+                                        <li class="trn-item trn-item-sale">
+                                            <div class="trn-item-price">
+                                                <div class="chevron-container">
+                                                    <img src="/images/svg/chevron-bottom.svg" class="trn-icon-img">
+                                                </div>
+                                                <span> <%= transaction.quantity.toFixed(2) %> (<%= transaction.previousQuantity.toFixed(2) %>
                         )</span>
-                </div>
-                <div class="divider"></div>
-                <a href="/sales/order?id=<%=transaction.orderId%>"><span><%= moment(transaction.date).format('DD.MM.YY HH:mm') %>
+                                            </div>
+                                            <div class="divider"></div>
+                                            <a href="/sales/order?id=<%=transaction.orderId%>"><span><%= moment(transaction.date).format('DD.MM.YY HH:mm') %>
                     </span></a>
-            </li>
-            <% } %>
-            <% }); %>
-        </ul>
-        <% if(transactions.length) { %>
-        
-        
-        <nav>
-            <ul class="pagination">
-                <% const pathPart = `/storage/product?id=${productInfo._id}`%>
-                <% if(pagination.currPage == 1) {%>
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">Попередня</a>
-                    </li>
-                <% } else { %>
-                    <li class="page-item">
-                        <a class="page-link" href="<%=`${pathPart}&page=${pagination.currPage - 1}`%>" tabindex="-1">Попередня</a>
-                    </li>
-                <% } %>
-                <% for(let i = 1; i <= pagination.pagesCount; i++) { %>
-                    <% if(pagination.currPage == i) {%>
-                        <li class="page-item active">
-                            <a class="page-link" href="#"><%=i%></a>
-                        </li>
-                    <% } else { %>
-                        <li class="page-item"><a class="page-link" href="<%=`${pathPart}&page=${i}`%>"><%=i%></a></li>
-                    <% } %>
-                <% } %>
+                                        </li>
+                                        <% } %>
+                                            <% }); %>
+                    </ul>
+                    <% if(transactions.length) { %>
 
-                <% if(pagination.currPage == pagination.pagesCount) {%>
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">Наступна</a>
-                    </li>
-                <% } else { %>
-                    <li class="page-item">
-                        <a class="page-link" href="<%=`${pathPart}&page=${pagination.currPage + 1}`%>">Наступна</a>
-                    </li>
-                <% } %>
-            </ul>
-        </nav>
-        <% } %>
+
+                        <nav>
+                            <ul class="pagination">
+                                <% const pathPart = `/storage/product?id=${productInfo._id}`%>
+                                    <% if(pagination.currPage == 1) {%>
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1">Попередня</a>
+                                        </li>
+                                        <% } else { %>
+                                            <li class="page-item">
+                                                <a class="page-link" href="<%=`${pathPart}&page=${pagination.currPage - 1}`%>" tabindex="-1">Попередня</a>
+                                            </li>
+                                            <% } %>
+                                                <% for(let i = 1; i <= pagination.pagesCount; i++) { %>
+                                                    <% if(pagination.currPage == i) {%>
+                                                        <li class="page-item active">
+                                                            <a class="page-link" href="#">
+                                                                <%=i%>
+                                                            </a>
+                                                        </li>
+                                                        <% } else { %>
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="<%=`${pathPart}&page=${i}`%>">
+                                                                    <%=i%>
+                                                                </a>
+                                                            </li>
+                                                            <% } %>
+                                                                <% } %>
+
+                                                                    <% if(pagination.currPage == pagination.pagesCount) {%>
+                                                                        <li class="page-item disabled">
+                                                                            <a class="page-link" href="#" tabindex="-1">Наступна</a>
+                                                                        </li>
+                                                                        <% } else { %>
+                                                                            <li class="page-item">
+                                                                                <a class="page-link" href="<%=`${pathPart}&page=${pagination.currPage + 1}`%>">Наступна</a>
+                                                                            </li>
+                                                                            <% } %>
+                            </ul>
+                        </nav>
+                        <% } %>
+        </div>
     </div>
-</div>
 
-<% include _layouts/footer %>
+    <% include _layouts/footer %>

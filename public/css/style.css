@@ -250,11 +250,11 @@ input[type="search"]:focus {
     outline: none;
 }
 
-select[name="days-table_length"] {
+select {
     border: none;
 }
 
-select[name="days-table_length"]:focus {
+select:focus {
     outline: none;
 }
 
