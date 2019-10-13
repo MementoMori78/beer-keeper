@@ -1,206 +1,215 @@
 <% include _layouts/header %>
 
-<div class="row">
-    <div class="col-sm-7" id="check">
-        <div class="card bg-light">
-            <h5 class="card-header">Поточне замовлення</h5>
-            <div class="card-body order-table">
-                <table class="table table-hover table-borderless table-striped">
-                    <thead>
-                        <tr style="font-size: 0.7em;">
-                            <th>Назва</th>
-                            <th>Кількість</th>
-                            <th>Вартість</th>
-                            <th>Сума</th>
-                            <th> </th>
-                            <th>Дія</th>
-                            
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% order.products.forEach(function(p){ %>
-                        <tr class="content">
-                            <td scope="row"><%= p.name %></td>
-                            <td><%= p.quantity %></td>
-                            <td><%= p.price %></td>
-                            <td class="cost"><%= (p.price * p.quantity).toFixed(2)%></td>
-                            <td><a href="/print?name=<%= p.name %>&quantity=<%= p.quantity %>"><button type="button"
+    <div class="row">
+        <div class="col-sm-7" id="check">
+            <div class="card bg-light">
+                <h5 class="card-header">Поточне замовлення</h5>
+                <div class="card-body order-table">
+                    <table class="table table-hover table-borderless table-striped">
+                        <thead>
+                            <tr style="font-size: 0.7em;">
+                                <th>Назва</th>
+                                <th>Кількість</th>
+                                <th>Вартість</th>
+                                <th>Сума</th>
+                                <th> </th>
+                                <th>Дія</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% order.products.forEach(function(p){ %>
+                                <tr class="content">
+                                    <td scope="row">
+                                        <a href="/storage/product?id=<%=p._id%>">
+                                            <%= p.name %>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <%= p.quantity %>
+                                    </td>
+                                    <td>
+                                        <%= p.price %>
+                                    </td>
+                                    <td class="cost">
+                                        <%= (p.price * p.quantity).toFixed(2)%>
+                                    </td>
+                                    <td><a href="/print?name=<%= p.name %>&quantity=<%= p.quantity %>"><button type="button"
                                         class="btn btn-outline-primary btn-sm">Друк</button></a></td>
-                            <td><a href="/del_product?id=<%= p._id %>&quantity=<%= p.quantity %>"><button type="button"
+                                    <td><a href="/del_product?id=<%= p._id %>&quantity=<%= p.quantity %>"><button type="button"
                                         class="btn btn-outline-danger btn-sm">Видалити</button></a></td>
-                        </tr>
-                        <% }); %>
-                    </tbody>
-                </table>
-            </div>
-            <div class="card-footer text-right">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon3">Загальна сума:</span>
-                    </div>
-                    <input class="form-control" id="totalCost" name="totalCost"
-                        placeholder="<%= order.sum.toFixed(2) %>" disabled>
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="basic-addon3">грн.</span>
-                    </div>
+                                </tr>
+                                <% }); %>
+                        </tbody>
+                    </table>
                 </div>
-                <% if(order.discount){ %>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon3">Cума зі знижкою:</span>
+                <div class="card-footer text-right">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon3">Загальна сума:</span>
+                        </div>
+                        <input class="form-control" id="totalCost" name="totalCost" placeholder="<%= order.sum.toFixed(2) %>" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon3">грн.</span>
+                        </div>
                     </div>
-                    <input class="form-control" id="totalCostWithDiscount" name="totalCostWithDiscount"
-                        placeholder="<%= order.discountSum.toFixed(2) %>" disabled>
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="basic-addon3">грн.</span>
-                    </div>
-                </div>
-                <% } %>
-                <div class="input-group mb-3">
-
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon3">Кошти клієнта:</span>
-                    </div>
-                    <input class="form-control no-spinners" id="customerMoney" name="customerMoney" min="0"
-                        placeholder="0.00" type="number" form="checkout">
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="basic-addon3">грн.</span>
-                    </div>
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon3">Решта:</span>
-                    </div>
-                    <input class="form-control no-spinners" id="change" name="change" placeholder="0.00" type="number"
-                        disabled>
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="basic-addon3">грн.</span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-6">
+                    <% if(order.discount){ %>
                         <div class="input-group mb-3">
-
-                            <input type="number" class="form-control no-spinners" id="discount-input"
-                                aria-label="Text input with checkbox" min="0" max="100"
-                                placeholder="<%=(order.discount)?order.discount:0%>">
-                            <div class="input-group-append">
-                                <span class="input-group-text" id="basic-addon3">%</span>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon3">Cума зі знижкою:</span>
                             </div>
+                            <input class="form-control" id="totalCostWithDiscount" name="totalCostWithDiscount" placeholder="<%= order.discountSum.toFixed(2) %>" disabled>
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="basic-addon3">грн.</span>
+                            </div>
+                        </div>
+                        <% } %>
+                            <div class="input-group mb-3">
 
-                            <a href="/add-discount?discount=0" class="btn btn-outline-success" id="update-discount-btn">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon3">Кошти клієнта:</span>
+                                </div>
+                                <input class="form-control no-spinners" id="customerMoney" name="customerMoney" min="0" placeholder="0.00" type="number" form="checkout">
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="basic-addon3">грн.</span>
+                                </div>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon3">Решта:</span>
+                                </div>
+                                <input class="form-control no-spinners" id="change" name="change" placeholder="0.00" type="number" disabled>
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="basic-addon3">грн.</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group mb-3">
+
+                                        <input type="number" class="form-control no-spinners" id="discount-input" aria-label="Text input with checkbox" min="0" max="100" placeholder="<%=(order.discount)?order.discount:0%>">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="basic-addon3">%</span>
+                                        </div>
+
+                                        <a href="/add-discount?discount=0" class="btn btn-outline-success" id="update-discount-btn">
                                 + Знижка
                             </a>
-                        </div>
+                                    </div>
 
-                    </div>
-                    <div class="col-6">
-                        <a href="/clear_order" class="btn btn-danger">Очистити</a>
-                        <a href="/check-out" class="btn btn-success" id="check-out">Зберегти</a>
-                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <a href="/clear_order" class="btn btn-danger">Очистити</a>
+                                    <a href="/check-out" class="btn btn-success" id="check-out">Зберегти</a>
+                                </div>
+                            </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-sm-5">
-        <div class="row">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="" id="search">
-                <div class="input-group-append">
-                    <span class="input-group-text" id="basic-addon1">Пошук</span>
-                </div>
+        <div class="col-sm-5">
+            <div class="row">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="" id="search">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon1">Пошук</span>
+                    </div>
 
+                </div>
             </div>
-        </div>
-        <table class="table table-hover table-borderless table-striped">
-            <thead>
-                <tr style="font-size: 0.7em;">
-                    <th>Назва</th>
-                    <th>Вартість</th>
-                    <th>Залишок</th>
-                    <th>Дія</th>
-                </tr>
-            </thead>
-            <tbody id="products_table">
-                <% products.forEach(function(p){ %>
-                <tr class="content" style="display: none;">
-                    <td scope="row"><%= p.title %></td>
-                    <td><%= p.price %></td>
-                    <td><%= p.quantity.toFixed(2) %></td>
-                    <td><button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal"
-                            <% if(p.category == "Пиво" || p.category == "ПИВО" || p.category == "ВИНО"){%>
+            <table class="table table-hover table-borderless table-striped">
+                <thead>
+                    <tr style="font-size: 0.7em;">
+                        <th>Назва</th>
+                        <th>Вартість</th>
+                        <th>Залишок</th>
+                        <th>Дія</th>
+                    </tr>
+                </thead>
+                <tbody id="products_table">
+                    <% products.forEach(function(p){ %>
+                        <tr class="content" style="display: none;">
+                            <td scope="row">
+                                <a href="/storage/product?id=<%=p._id%>">
+                                    <%= p.title %>
+                                </a>
+                            </td>
+                            <td>
+                                <%= p.price %>
+                            </td>
+                            <td>
+                                <%= p.quantity.toFixed(2) %>
+                            </td>
+                            <td><button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" <% if(p.category=="Пиво" || p.category=="ПИВО" || p.category=="ВИНО" ){%>
                             data-target="#exampleModalBeer" <%} else { %> data-target="#exampleModal" <%} %>
                             data-whatever="<%= p.title %>" data-id="<%= p._id%>">Додати</button></td>
-                </tr>
-                <% }); %>
-            </tbody>
-        </table>
-    </div>
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Вкажіть кількість для</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Вкажіть кількість для</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                </div>
-                <div class="modal-body">
-                    <form id="add_product_form" method="post" action="/">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-addon3">Кількість:</span>
+                    </div>
+                    <div class="modal-body">
+                        <form id="add_product_form" method="post" action="/">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon3">Кількість:</span>
+                                </div>
+                                <input type="number" class="form-control no-spinners" id="quantity" step="0.001" min="0" name="quantity">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">кг</span>
+                                </div>
                             </div>
-                            <input type="number" class="form-control no-spinners" id="quantity" step="0.001" min="0"
-                                name="quantity">
-                            <div class="input-group-append">
-                                <span class="input-group-text">кг</span>
-                            </div>
-                        </div>
-                        <input type="string" id="_id" style="display: none;" name="id">
-                    </form>
+                            <input type="string" id="_id" style="display: none;" name="id">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" form="add_product_form" class="btn btn-primary">Додати</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" form="add_product_form" class="btn btn-primary">Додати</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
+            </div>
+        </div>
+        <div class="modal fade" id="exampleModalBeer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Вкажіть кількість для</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="add_product_form_beer" method="post" action="/">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon3">Кількість:</span>
+                                </div>
+                                <input type="number" class="form-control no-spinners" id="quantityBeer" step="0.5" min="0.5" max="2.5" name="quantity">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">кг</span>
+                                </div>
+                            </div>
+                            <input type="string" id="_id_beer" style="display: none;" name="id">
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" form="add_product_form_beer" class="btn btn-primary">Додати</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
+                        <label class="radio"><input type="radio" name="mult" value="x2"
+                            form="add_product_form_beer">X2</label>
+                        <label class="radio"><input type="radio" name="mult" value="x3"
+                            form="add_product_form_beer">X3</label>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="exampleModalBeer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Вкажіть кількість для</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="add_product_form_beer" method="post" action="/">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-addon3">Кількість:</span>
-                            </div>
-                            <input type="number" class="form-control no-spinners" id="quantityBeer" step="0.5" min="0.5"
-                                max="2.5" name="quantity">
-                            <div class="input-group-append">
-                                <span class="input-group-text">кг</span>
-                            </div>
-                        </div>
-                        <input type="string" id="_id_beer" style="display: none;" name="id">
 
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" form="add_product_form_beer" class="btn btn-primary">Додати</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
-                    <label class="radio"><input type="radio" name="mult" value="x2" form="add_product_form_beer" >X2</label>
-                    <label class="radio"><input type="radio" name="mult" value="x3" form="add_product_form_beer" >X3</label>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<% include _layouts/footer %>
+    <% include _layouts/footer %>

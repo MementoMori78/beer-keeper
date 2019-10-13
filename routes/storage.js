@@ -10,7 +10,7 @@ var Product = require('../models/product');
 var moment = require('moment');
 moment.locale('uk');
 
-router.get('/del_product_from_db', function (req, res) {
+router.get('/del_product_from_db', function(req, res) {
     console.log(`GET [/del] params: id=${req.query.id}`);
     Product.remove({ _id: req.query.id }, (err) => {
         if (!err) {
@@ -114,6 +114,7 @@ router.post('/write-off', (req, res) => {
         'storage': 'active'
     }
     const recievedWriteOffValue = parseFloat(req.body.quantity);
+    const recievedRason = (req.body.reason) ? req.body.reason : null;
     if (!recievedWriteOffValue || recievedWriteOffValue < 0) {
         res.flash('error', 'Некоректна кількість до списання');
         return res.redirect('/storage');
@@ -132,7 +133,8 @@ router.post('/write-off', (req, res) => {
                 productName: product.title,
                 type: "write-off",
                 quantity: recievedWriteOffValue,
-                previousQuantity: product.quantity + recievedWriteOffValue
+                previousQuantity: product.quantity + recievedWriteOffValue,
+                reason: recievedRason
             })
             newTransaction.save((err) => {
                 if (err) {
@@ -189,6 +191,7 @@ router.post('/edit', (req, res) => {
                 req.flash('error', `Помилка при збереженні змін у БД.`);
                 return res.redirect('/storage')
             }
+            req.flash('success', `Успышно відредаговано товар "${product.title}"`);
             res.redirect('/storage');
         });
     });
@@ -284,7 +287,7 @@ router.get('/product', (req, res) => {
                 pagingSize: pagingSize,
                 pagesCount: Math.ceil(_transactions.length / pagingSize)
             }
-            if(!parseInt(req.query.page)){
+            if (!parseInt(req.query.page)) {
                 pagination.currPage = 1;
             } else if (parseInt(req.query.page) < 1 || parseInt(req.query.page) > pagination.pagesCount) {
                 pagination.currPage = 1;
@@ -295,7 +298,7 @@ router.get('/product', (req, res) => {
             res.render('product', {
                 moment: moment,
                 navClasses: navClasses,
-                productInfo: product,   
+                productInfo: product,
                 transactions: trnToSend,
                 pagination: pagination
             });

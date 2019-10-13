@@ -1,81 +1,123 @@
 <% include _layouts/header %>
-<div class="row">
-    <div class="col-12"><h3>Чеки за <%=dayBalance.headerStr%></h3></div>
-</div>
-<div class="row">
-    <div class="list-group col-4" id="myList" role="tablist">
-        <% orders.slice().reverse().forEach( (o) => { %>
-        <a class="list-group-item list-group-item-action" data-toggle="list" href="#<%= 'id-' + o._id%>"
-            onclick="hideDayInfo()" role="tab"><%= o.headerStr %> <b>
+    <div class="row">
+        <div class="col-12">
+            <h3>Чеки за
+                <%=dayBalance.headerStr%>
+            </h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="list-group col-4" id="myList" role="tablist">
+            <% orders.slice().reverse().forEach( (o) => { %>
+                <a class="list-group-item list-group-item-action" data-toggle="list" href="#<%= 'id-' + o._id%>" onclick="hideDayInfo()" role="tab">
+                    <%= o.headerStr %> <b>
                 <%= o.discount ? o.discountSum.toFixed(2) + "⬇️":o.totalSum.toFixed(2)%> ₴ </b></a>
-        <%})%>
-    </div>
+                <%})%>
+        </div>
 
-    <div class="col-8 " id="day-info">
-        <h4> Каса за день: <%=dayBalance.totalSum.toFixed(0) %> грн.</h4>
-        <h4> Надано знижок на суму: <%=discountedSum.toFixed(2) %> грн.</h4>
-        <table class="table table-hover table-borderless table-striped" id="day-info-table">
-            <thead>
-                <tr style="font-size: 0.7em;">
-                    <th>Продукт</th>
-                    <th>Категорія</th>
-                    <th>Продано за день</th>
-                    <th>Вартість</th>
-                    <th>На суму</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% productsTable.forEach(function(p){ %>
-                <tr class="content">
-                    <td scope="row"><%= p.name %></td>
-                    <td><%= p.category %></td>
-                    <td><%= p.quantity.toFixed(2) %></td>
-                    <td><%= p.price.toFixed(2) %></td>
-                    <td class="cost"><%= (p.price * p.quantity).toFixed(2)%></td>
-                </tr>
-                <% }); %>
-            </tbody>
-        </table>
-    </div>
-    <!-- Tab panes -->
-    <div class="tab-content col-8">
-        <% orders.forEach( (o) => { %>
-        <div class="tab-pane" id="<%= 'id-' + o._id%>" role="tabpanel">
-            <table class="table table-hover table-borderless table-striped">
+        <div class="col-8 " id="day-info">
+            <h4> Каса за день:
+                <%=dayBalance.totalSum.toFixed(0) %> грн.</h4>
+            <h4> Надано знижок на суму:
+                <%=discountedSum.toFixed(2) %> грн.</h4>
+            <table class="table table-hover table-borderless table-striped" id="day-info-table">
                 <thead>
                     <tr style="font-size: 0.7em;">
-                        <th>Назва</th>
-                        <th>Кількість</th>
+                        <th>Продукт</th>
+                        <th>Категорія</th>
+                        <th>Продано за день</th>
                         <th>Вартість</th>
-                        <th>Сума</th>
+                        <th>На суму</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% o.products.forEach(function(p){ %>
-                    <tr class="content">
-                        <td scope="row"><%= p.name %></td>
-                        <td><%= p.quantity %></td>
-                        <td><%= p.price %></td>
-                        <td class="cost"><%= (p.price * p.quantity).toFixed(2)%></td>
-                    </tr>
-                    <% }); %>
+                    <% productsTable.forEach(function(p){ %>
+                        <tr class="content">
+                            <td scope="row">
+                                <a href="/storage/product?id=<%=p._id%>">
+                                    <%= p.name %>
+                                </a>
+                            </td>
+                            <td>
+                                <%= p.category %>
+                            </td>
+                            <td>
+                                <%= p.quantity.toFixed(2) %>
+                            </td>
+                            <td>
+                                <%= p.price.toFixed(2) %>
+                            </td>
+                            <td class="cost">
+                                <%= (p.price * p.quantity).toFixed(2)%>
+                            </td>
+                        </tr>
+                        <% }); %>
                 </tbody>
             </table>
-            <p style="color: white; cursor: default;"> <%= o._id %></p>
-            <ul class="list-group">
-                <li class="list-group-item">Cума: <%=o.totalSum.toFixed(2)%></li>
-                <% if(!o.discount) {%>
-                <li class="list-group-item">Кошти клієнта: <%=o.customerMoney.toFixed(2)%></li>
-                <li class="list-group-item">Решта: <%=(o.customerMoney - o.totalSum).toFixed(2)%></li>
-                <%} else {%>
-                <li class="list-group-item">Знижка: <%=( o.discount ) + '%'%></li>
-                <li class="list-group-item">Кошти клієнта: <%=o.customerMoney.toFixed(2)%></li>
-                <li class="list-group-item">Решта: <%=(o.customerMoney - o.discountSum).toFixed(2)%></li>
-                <%}%>
-                <li class="list-group-item list-group-item-danger"><a href="/sales/delete_order?id=<%=o._id%>" class="text-dark check-deletion">Видалити замовлення</a></li>
-            </ul>
-            </div>
-        <%})%>
+        </div>
+        <!-- Tab panes -->
+        <div class="tab-content col-8">
+            <% orders.forEach( (o) => { %>
+                <div class="tab-pane" id="<%= 'id-' + o._id%>" role="tabpanel">
+                    <table class="table table-hover table-borderless table-striped">
+                        <thead>
+                            <tr style="font-size: 0.7em;">
+                                <th>Назва</th>
+                                <th>Кількість</th>
+                                <th>Вартість</th>
+                                <th>Сума</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% o.products.forEach(function(p){ %>
+                                <tr class="content">
+                                    <td scope="row">
+                                        <a href="/storage/product?id=<%=p._id%>">
+                                            <%= p.name %>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <%= p.quantity %>
+                                    </td>
+                                    <td>
+                                        <%= p.price %>
+                                    </td>
+                                    <td class="cost">
+                                        <%= (p.price * p.quantity).toFixed(2)%>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                        </tbody>
+                    </table>
+                    <p style="color: white; cursor: default;">
+                        <%= o._id %>
+                    </p>
+                    <ul class="list-group">
+                        <li class="list-group-item">Cума:
+                            <%=o.totalSum.toFixed(2)%>
+                        </li>
+                        <% if(!o.discount) {%>
+                            <li class="list-group-item">Кошти клієнта:
+                                <%=o.customerMoney.toFixed(2)%>
+                            </li>
+                            <li class="list-group-item">Решта:
+                                <%=(o.customerMoney - o.totalSum).toFixed(2)%>
+                            </li>
+                            <%} else {%>
+                                <li class="list-group-item">Знижка:
+                                    <%=( o.discount ) + '%'%>
+                                </li>
+                                <li class="list-group-item">Кошти клієнта:
+                                    <%=o.customerMoney.toFixed(2)%>
+                                </li>
+                                <li class="list-group-item">Решта:
+                                    <%=(o.customerMoney - o.discountSum).toFixed(2)%>
+                                </li>
+                                <%}%>
+                                    <li class="list-group-item list-group-item-danger"><a href="/sales/delete_order?id=<%=o._id%>" class="text-dark check-deletion">Видалити замовлення</a></li>
+                    </ul>
+                </div>
+                <%})%>
         </div>
     </div>
     <% include _layouts/footer %>

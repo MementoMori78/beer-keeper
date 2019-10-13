@@ -1,36 +1,44 @@
 <% include _layouts/header %>
-<div class="row">
-    <div class="col-12">
-        <h3>Додати новий продукт</h3>
+    <div class="row">
+        <div class="col-12">
+            <h3>Додати новий продукт</h3>
+        </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <form action="/storage/create_product" method="post">
-            <div class="form-group">
-                <label for="title">Назва</label>
-                <input required type="text" class="form-control" name="title" id="title" placeholder="Назва">
-            </div>
-            <div class="form-group">
-                <label for="price">Вартість</label>
-                <div class="input-group">
-                    <input required type="number" class="form-control no-spinners" id="quantity" name="price"
-                        placeholder="Вартість" min='0' step='0.01'>
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="basic-addon3">грн. за кг.</span>
+    <div class="row">
+        <div class="col-12">
+            <form action="/storage/create_product" method="post">
+                <div class="form-group">
+                    <label for="title">Назва</label>
+                    <input required type="text" class="form-control" name="title" id="title" placeholder="Назва">
+                </div>
+                <div class="form-group">
+                    <label for="price">Вартість</label>
+                    <div class="input-group">
+                        <input required type="number" class="form-control no-spinners" id="price" name="price" placeholder="Вартість" min='0' step='0.01'>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon3">грн. за кг.</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="category">Категорія</label>
-                <select required class="form-control" id="category" name="category">
+                <div class="form-group">
+                    <label for="cost">Собівартість</label>
+                    <div class="input-group">
+                        <input required type="number" class="form-control no-spinners" id="cost" name="cost" placeholder="Собівартість" min='0' step='0.01'>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon3">грн. за кг.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="category">Категорія</label>
+                    <select required class="form-control" id="category" name="category">
                     <%categories.forEach(cat => {%>
                     <option> <%=cat.title%></option>
                     <%});%>
                 </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Додати</button>
-        </form>
+                </div>
+                <button type="submit" class="btn btn-primary">Додати</button>
+            </form>
+        </div>
     </div>
-</div>
-<% include _layouts/footer %>
+    <% include _layouts/footer %>

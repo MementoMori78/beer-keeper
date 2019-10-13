@@ -21,14 +21,13 @@ router.get('/day', (req, res) => {
             req.flash('error', 'Помилка при пошуку інформації по вказаному дню');
             return res.redirect('/sales');
         } else {
-            if (!dayBalance){
+            if (!dayBalance) {
                 req.flash('error', 'Помилка при пошуку інформації по вказаному дню');
                 return res.redirect('/sales');
-            } 
+            }
             Order.find({
                 '_id': {
-                    $in:
-                        dayBalance.orders
+                    $in: dayBalance.orders
                 }
             }, (err, orders) => {
                 if (err) {

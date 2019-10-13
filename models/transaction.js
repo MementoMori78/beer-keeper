@@ -4,7 +4,7 @@ var ObjectId = mongoose.Schema.Types.ObjectId;
 
 var TransactionSchema = mongoose.Schema({
     productId: {
-        type: ObjectId, 
+        type: ObjectId,
         required: true
     },
     orderId: {
@@ -18,13 +18,13 @@ var TransactionSchema = mongoose.Schema({
     type: {
         type: String, // income, write-off, sale
         required: true
-    }, 
-    date: { 
-        type: Date, 
+    },
+    date: {
+        type: Date,
         default: Date.now
     },
     quantity: {
-        type: Number, 
+        type: Number,
         default: 0,
         required: true
     },
@@ -38,6 +38,10 @@ var TransactionSchema = mongoose.Schema({
     provider: {
         type: String,
         default: 'Постачальник не вказаний'
+    },
+    reason: {
+        type: String,
+        default: 'Причина не вказана'
     }
 });
 

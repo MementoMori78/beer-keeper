@@ -8,7 +8,7 @@ var ProductSchema = mongoose.Schema({
     slug: {
         type: String
     },
-    desc: String,   
+    desc: String,
     category: {
         type: String,
         required: true
@@ -17,10 +17,16 @@ var ProductSchema = mongoose.Schema({
         type: Number,
         required: true
     },
+    cost: {
+        type: Number
+    },
     quantity: {
         type: Number
+    },
+    timestamps: {
+        type: Array,
+        default: []
     }
 });
 
 var Product = module.exports = mongoose.model('Product', ProductSchema);
-

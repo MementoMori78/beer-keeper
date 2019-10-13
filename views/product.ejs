@@ -1,14 +1,14 @@
 <% include _layouts/header %>
     <div class="row">
         <div class="col-12">
-            <h1>
+            <h3>
                 <%= productInfo.title %>
-            </h1>
+            </h3>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-6">
             <ul class="list-group">
                 <li class="list-group-item d-flex justify-content-between">
                     <div>
@@ -20,11 +20,24 @@
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
                     <div>
+                        <b>Залишок</b>
+                    </div>
+                    <span>
+                    <%= productInfo.quantity.toFixed(2) %>
+                </span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-6">
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between">
+                    <div>
                         <b>Вартість</b>
                     </div>
                     <span>
-                    <%= productInfo.price %>&nbsp;₴
-                </span>
+                            <%= productInfo.price %>&nbsp;₴
+                        </span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
                     <div>
@@ -35,17 +48,33 @@
                 </span>
                 </li>
 
-                <li class="list-group-item d-flex justify-content-between">
-                    <div>
-                        <b>Залишок</b>
-                    </div>
-                    <span>
-                    <%= productInfo.quantity.toFixed(2) %>
-                </span>
-                </li>
+
             </ul>
         </div>
-        <div class="col-sm-8">
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12">
+            <div class="product-control-buttons">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <a href="/storage/replenish?id=<%=productInfo._id%>" class="btn btn-success" role="button">Поповнити</a>
+                    <a href="/storage/write-off?id=<%=productInfo._id%>" class="btn btn-warning" role="button">Списати</a>
+                    <a href="/storage/edit?id=<%=productInfo._id%>" class="btn btn-primary" role="button">Редагувати</a>
+                    <a href="/storage/del_product_from_db?id=<%=productInfo._id%>" class="btn btn-danger confirmDeletion" role="button">Видалити</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <h3>
+                Операції
+            </h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
             <% if(!transactions.length) { %>
                 <h6> Для даного товару відсутні збережені операції</h6>
                 <% } %>
@@ -82,7 +111,10 @@
                                         <div class="divider"></div>
                                         <span><%= `${(0 - productInfo.price * transaction.quantity).toFixed(2)} ₴` %></span>
                                         <div class="divider"></div>
+                                        <span><%= transaction.reason %> </span>
+                                        <div class="divider"></div>
                                         <span><%= moment(transaction.date).format('DD.MM.YY HH:mm') %> </span>
+
                                     </li>
                                     <% } else if(transaction.type == "sale") { %>
                                         <li class="trn-item trn-item-sale">
@@ -93,7 +125,6 @@
                                                 <span> <%= transaction.quantity.toFixed(2) %> (<%= transaction.previousQuantity.toFixed(2) %>
                         )</span>
                                             </div>
-                                            <div class="divider"></div>
                                             <a href="/sales/order?id=<%=transaction.orderId%>"><span><%= moment(transaction.date).format('DD.MM.YY HH:mm') %>
                     </span></a>
                                         </li>
@@ -102,8 +133,9 @@
                     </ul>
                     <% if(transactions.length) { %>
 
-
+                        <hr>
                         <nav>
+
                             <ul class="pagination">
                                 <% const pathPart = `/storage/product?id=${productInfo._id}`%>
                                     <% if(pagination.currPage == 1) {%>

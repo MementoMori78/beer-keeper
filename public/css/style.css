@@ -141,7 +141,7 @@ th {
 
 h3 {
     padding-top: 10px;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
 }
 
 ul.trn-list {
@@ -160,6 +160,15 @@ li.trn-item {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    -webkit-box-shadow: 0px 0px 4px -2px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 4px -2px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 0px 4px -2px rgba(0, 0, 0, 0.75);
+}
+
+li.trn-item:hover {
+    -webkit-box-shadow: 0px 0px 6px -2px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 6px -2px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 0px 6px -2px rgba(0, 0, 0, 0.75);
 }
 
 li.trn-item-top {
@@ -224,7 +233,6 @@ table.dataTable.no-footer {
 
 .table-hover tbody tr:hover {
     color: black;
-    border: 2px solid blue;
     background-color: rgba(0, 0, 0, 0.151);
 }
 
@@ -260,4 +268,25 @@ select:focus {
 
 select[name="days-table_length"]:hover {
     cursor: hand;
+}
+
+ul.list-group {
+    -webkit-box-shadow: 0px 0px 4px -1px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 4px -1px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 0px 4px -1px rgba(0, 0, 0, 0.75);
+    border-radius: .25rem;
+}
+
+div.product-control-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    -webkit-box-shadow: 0px 0px 4px -1px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 4px -1px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 0px 4px -1px rgba(0, 0, 0, 0.75);
+    border-radius: .25rem;
+}
+
+div.product-control-buttons>.btn-group {
+    width: 100%;
 }
