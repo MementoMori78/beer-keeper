@@ -36,7 +36,7 @@
                         <b>Вартість</b>
                     </div>
                     <span>
-                            <%= productInfo.price %>&nbsp;₴
+                            <%= productInfo.price.toFixed(2) %>&nbsp;₴
                         </span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
@@ -44,7 +44,7 @@
                         <b>Собівартість</b>
                     </div>
                     <span>
-                    TODO
+                        <%- (productInfo.cost) ? `${productInfo.cost.toFixed(2)} &nbsp;₴` : `Собівартість не вказана` %>
                 </span>
                 </li>
 
@@ -60,7 +60,8 @@
                     <a href="/storage/replenish?id=<%=productInfo._id%>" class="btn btn-success" role="button">Поповнити</a>
                     <a href="/storage/write-off?id=<%=productInfo._id%>" class="btn btn-warning" role="button">Списати</a>
                     <a href="/storage/edit?id=<%=productInfo._id%>" class="btn btn-primary" role="button">Редагувати</a>
-                    <a href="/storage/del_product_from_db?id=<%=productInfo._id%>" class="btn btn-danger confirmDeletion" role="button">Видалити</a>
+                    <a href="/storage/out-of-product?id=<%=productInfo._id%>" class="btn btn-danger confirmEnd" role="button">Закінчився</a>
+                    <a href="/storage/del_product_from_db?id=<%=productInfo._id%>" class="btn btn-dark confirmDeletion" role="button">Видалити</a>
                 </div>
             </div>
         </div>
@@ -128,8 +129,32 @@
                                             <a href="/sales/order?id=<%=transaction.orderId%>"><span><%= moment(transaction.date).format('DD.MM.YY HH:mm') %>
                     </span></a>
                                         </li>
-                                        <% } %>
-                                            <% }); %>
+
+                                        <% } else if(transaction.type == "out-of-product") { %>
+                                            <li class="trn-item trn-item-out">
+                                                <div class="trn-item-price">
+                                                    <div class="chevron-container">
+                                                        <img src="/images/svg/chevron-bottom.svg" class="trn-icon-img">
+                                                    </div>
+                                                    <span> <%= transaction.quantity.toFixed(2) %> (<%= transaction.previousQuantity.toFixed(2) %>
+                        )</span>
+                                                </div>
+                                                <div class="divider"></div>
+                                                <span>Товар закінчився</span>
+                                                <div class="divider"></div>
+                                                <% if(transaction.additional){%>
+                                                    <span><%= `+${transaction.additional.replenishTotal.toFixed(2)}`%></span>
+                                                    <div class="divider"></div>
+                                                    <span><%= transaction.additional.saleTotal.toFixed(2)%></span>
+                                                    <div class="divider"></div>
+                                                    <span><%= transaction.additional.writeOffTotal.toFixed(2)%></span>
+                                                    <div class="divider"></div>
+                                                    <%}%>
+                                                        <span><%= moment(transaction.date).format('DD.MM.YY HH:mm') %>
+                    </span>
+                                            </li>
+                                            <% } %>
+                                                <% }); %>
                     </ul>
                     <% if(transactions.length) { %>
 

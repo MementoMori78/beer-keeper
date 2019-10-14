@@ -71,14 +71,14 @@ router.post('/replenish', (req, res) => {
                 req.flash('error', 'Помилка при поповненні товару');
                 return res.redirect('/storage')
             }
-            let costToSave = parseFloat(req.body.cost) ? parseFloat(req.body.cost) : 0;
             let newTransaction = new Transaction({
                 productId: product._id,
                 productName: product.title,
                 type: "replenishment",
                 quantity: recievedreplenishValue,
                 previousQuantity: product.quantity - recievedreplenishValue,
-                cost: costToSave,
+                price: product.price,
+                cost: product.cost,
                 provider: req.body.provider
             })
             newTransaction.save((err) => {
@@ -185,13 +185,14 @@ router.post('/edit', (req, res) => {
         }
         product.title = (req.body.title) ? req.body.title : product.title;
         product.price = parseFloat(req.body.price) ? parseFloat(req.body.price) : product.price;
+        product.cost = parseFloat(req.body.cost) ? parseFloat(req.body.cost) : product.cost;
         product.category = req.body.category;
         product.save((err) => {
             if (err) {
                 req.flash('error', `Помилка при збереженні змін у БД.`);
                 return res.redirect('/storage')
             }
-            req.flash('success', `Успышно відредаговано товар "${product.title}"`);
+            req.flash('success', `Успішно відредаговано товар "${product.title}"`);
             res.redirect('/storage');
         });
     });
@@ -268,7 +269,7 @@ router.get('/product', (req, res) => {
         return res.redirect('/storage')
     }
     Product.findById(req.query.id, (err, product) => {
-        if (err) {
+        if (err || !product) {
             console.log(err);
             req.flash('error', 'Помилка при пошуку товару за вказаним ID у БД');
             return res.redirect('/storage')
@@ -282,7 +283,7 @@ router.get('/product', (req, res) => {
             _transactions.sort((a, b) => {
                 return new Date(b.date) - new Date(a.date);
             })
-            const pagingSize = 10
+            const pagingSize = 15;
             const pagination = {
                 pagingSize: pagingSize,
                 pagesCount: Math.ceil(_transactions.length / pagingSize)
@@ -305,6 +306,112 @@ router.get('/product', (req, res) => {
         });
     })
 })
+
+router.get('/out-of-product', (req, res) => {
+    if (!req.query.id) {
+        req.flash('error', 'Помилка. ID не вказаний');
+        return res.redirect('/storage');
+    }
+    Product.findById(req.query.id, (err, product) => {
+        if (err || !product) {
+            console.log(err);
+            req.flash('error', 'Помилка при пошуку товару за вказаним ID');
+            return res.redirect('/storage');
+        }
+
+        if (!product.timestamps) {
+            product.timestamps = [new Date()];
+        } else {
+            product.timestamps.push(new Date());
+        }
+        if (product.timestamps.length < 2) {
+            let newTrn = new Transaction({
+                productId: product._id,
+                productName: product.title,
+                type: "out-of-product",
+                quantity: 0,
+                previousQuantity: product.quantity
+            })
+            product.quantity = 0;
+            product.save((err) => {
+                if (err) {
+                    console.log(err);
+                    req.flash('error', 'Помилка при збереженні змін по товару у БД.');
+                    return res.redirect('/storage');
+                }
+                newTrn.save((err) => {
+                    if (err) {
+                        console.log(err);
+                        req.flash('error', 'Помилка при збереженні змін по товару у БД.');
+                        return res.redirect('/storage');
+                    }
+                    req.flash('success', `Успішно зафіксовано закінчення товару "${product.title}"`);
+                    res.redirect(`/storage/product?id=${product._id}`);
+                })
+            });
+        } else {
+            Transaction.find({
+                productId: product._id,
+                date: {
+                    $gt: product.timestamps[product.timestamps.length - 2],
+                    $lt: new Date()
+                }
+            }, (err, transactions) => {
+                if (err) {
+                    console.log(err);
+                    req.flash('error', 'Помилка при пошуку операцій у БД.');
+                    return res.redirect('/storage');
+                } else {
+                    let replenishSum = 0.;
+                    let writeOffSum = 0.;
+                    let saleSum = 0.;
+                    transactions.forEach((trn) => {
+                        switch (trn.type) {
+                            case "sale":
+                                saleSum += trn.quantity;
+                                break;
+                            case "replenishment":
+                                replenishSum += trn.quantity;
+                                break;
+                            case "write-off":
+                                writeOffSum += trn.quantity;
+                                break;
+                        }
+                    });
+                    let newTrn = new Transaction({
+                        productId: product._id,
+                        productName: product.title,
+                        type: "out-of-product",
+                        quantity: 0,
+                        previousQuantity: product.quantity,
+                        additional: {
+                            saleTotal: saleSum,
+                            writeOffTotal: writeOffSum,
+                            replenishTotal: replenishSum
+                        }
+                    })
+                    product.quantity = 0;
+                    product.save((err) => {
+                        if (err) {
+                            console.log(err);
+                            req.flash('error', 'Помилка при збереженні змін по товару у БД.');
+                            return res.redirect('/storage');
+                        }
+                        newTrn.save((err) => {
+                            if (err) {
+                                console.log(err);
+                                req.flash('error', 'Помилка при збереженні змін по товару у БД.');
+                                return res.redirect('/storage');
+                            }
+                            req.flash('success', `Успішно зафіксовано закінчення товару "${product.title}"`);
+                            res.redirect(`/storage/product?id=${product._id}`);
+                        })
+                    });
+                }
+            })
+        }
+    })
+});
 
 // Exports
 module.exports = router;

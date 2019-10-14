@@ -183,6 +183,11 @@ li.trn-item-sale {
     background-color: #0026ff2a
 }
 
+li.trn-item-out {
+    background-color: #ff0000f6;
+    color: white;
+}
+
 li.trn-item-top:hover {
     background-color: rgba(30, 255, 0, 0.486)
 }
@@ -193,6 +198,10 @@ li.trn-item-down:hover {
 
 li.trn-item-sale:hover {
     background-color: #0026ff65
+}
+
+li.trn-item-out:hover {
+    background-color: #ff0000
 }
 
 img.trn-icon-img {

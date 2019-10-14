@@ -1,65 +1,81 @@
 <% include _layouts/header %>
-<div class="row">
-    <div class="col-12"><h3>Облік товару</h3></div>
-</div>
-<div class="row">
-    <!-- Tab panes -->
-    <div class="col-12">
-        <table class="table table-hover table-borderless table-striped" id="balance-table">
-            <thead>
-                <tr style="font-size: 0.7em;">
-                    <th>Назва</th>
-                    <th>Залишок</th>
-                    <th>Категорія</th>
-                    <th>Вартість</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="products_table">
-                <% products.forEach(function(p){ %>
-                <tr class="content">
-                    <td scope="row"> <a href="/storage/product?id=<%=p._id%>" ><%= p.title %></a></td>
-                    <td>
-                        <h6><%= p.quantity.toFixed(2) %></h6>
-                    </td>
-                    <td><%= p.category %></td>
-                    <td><%= p.price %></td>
-                    <td>
-                        <a href="/storage/replenish?id=<%=p._id%>">
+    <div class="row">
+        <div class="col-12">
+            <h3>Облік товару</h3>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Tab panes -->
+        <div class="col-12">
+            <table class="table table-hover table-borderless table-striped" id="balance-table">
+                <thead>
+                    <tr style="font-size: 0.7em;">
+                        <th>Назва</th>
+                        <th>Залишок</th>
+                        <th>Категорія</th>
+                        <th>Вартість</th>
+                        <th>Собівартість</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="products_table">
+                    <% products.forEach(function(p){ %>
+                        <tr class="content">
+                            <td scope="row">
+                                <a href="/storage/product?id=<%=p._id%>">
+                                    <%= p.title %>
+                                </a>
+                            </td>
+                            <td>
+                                <h6>
+                                    <%= p.quantity.toFixed(2) %>
+                                </h6>
+                            </td>
+                            <td>
+                                <%= p.category %>
+                            </td>
+                            <td>
+                                <%= p.price %>
+                            </td>
+                            <td>
+                                <%= p.cost ? p.cost : 0 %>
+                            </td>
+                            <td>
+                                <a href="/storage/replenish?id=<%=p._id%>">
                             <button type="button" class="btn btn-outline-success btn-sm"
                                 href="/storage/replenish?id=<%=p._id%>">
                                 +
                             </button>
                         </a>
-                    </td>
-                    <td>
-                        <a href="/storage/write-off?id=<%=p._id%>">
-                            <button type="button" class="btn btn-outline-danger btn-sm">
+                            </td>
+                            <td>
+                                <a href="/storage/write-off?id=<%=p._id%>">
+                                    <button type="button" class="btn btn-outline-warning btn-sm">
                                 -
                             </button>
-                        </a>
-                    </td>
-                    <td>
-                        <a href="/storage/edit?id=<%=p._id%>">
-                            <button type="button" class="btn btn-outline-warning btn-sm" >
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/storage/edit?id=<%=p._id%>">
+                                    <button type="button" class="btn btn-outline-primary btn-sm">
                                 Редагувати
                             </button>
-                        </a>
-                    </td>
-                    <td>
-                        <a href="/storage/del_product_from_db?id=<%=p._id%>" class="confirmDeletion">
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/storage/out-of-product?id=<%=p._id%>" class="confirmEnd">
                             <button type="button" class="btn btn-danger btn-sm"">
-                                Видалити
+                                Закінчився
                             </button>
                         </a>
-                    </td>
-                </tr>
-                <% }); %>
-            </tbody>
-        </table>
+                            </td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
-<% include _layouts/footer %>
+    <% include _layouts/footer %>

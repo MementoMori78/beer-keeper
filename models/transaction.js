@@ -31,6 +31,10 @@ var TransactionSchema = mongoose.Schema({
     previousQuantity: {
         type: Number
     },
+    price: {
+        type: Number,
+        default: 0
+    },
     cost: {
         type: Number,
         default: 0
@@ -42,6 +46,9 @@ var TransactionSchema = mongoose.Schema({
     reason: {
         type: String,
         default: 'Причина не вказана'
+    },
+    additional: {
+        type: Object
     }
 });
 

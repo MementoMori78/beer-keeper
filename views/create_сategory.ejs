@@ -1,18 +1,18 @@
 <% include _layouts/header %>
-<div class="row">
-    <div class="col-12">
-        <h3>Створити нову категорію</h3>
+    <div class="row">
+        <div class="col-12">
+            <h3>Створити нову категорію</h3>
+        </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <form action="/storage/create_category" method="post">
-            <div class="form-group">
-                <label for="title">Назва категорії</label>
-                <input required type="text" class="form-control" name="title" id="title" placeholder="Назва категорії">
-            </div>
-            <button type="submit" class="btn btn-primary">Створити</button>
-        </form>
+    <div class="row">
+        <div class="col-12">
+            <form action="/storage/create_category" method="post">
+                <div class="form-group">
+                    <label for="title">Назва категорії</label>
+                    <input required type="text" class="form-control" name="title" id="title" placeholder="Назва категорії">
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg btn-block">Створити</button>
+            </form>
+        </div>
     </div>
-</div>
-<% include _layouts/footer %>
+    <% include _layouts/footer %>

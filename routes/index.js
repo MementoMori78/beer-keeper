@@ -24,7 +24,7 @@ function createDayBalanceHeaderString(date) {
 
 // GETting the check-out page
 
-router.get('/', function (req, res) {
+router.get('/', function(req, res) {
     let navClasses = {
         'cas': 'active',
         'storage': ''
@@ -43,7 +43,7 @@ router.get('/', function (req, res) {
     });
 });
 
-router.get('/clear_order', function (req, res) {
+router.get('/clear_order', function(req, res) {
     req.session.currentOrder = {
         products: [],
         sum: 0
@@ -51,7 +51,7 @@ router.get('/clear_order', function (req, res) {
     res.redirect('/');
 });
 
-router.get('/del_product', function (req, res) {
+router.get('/del_product', function(req, res) {
     console.log(`GET [/del] params: id=${req.query.id} quantity=${req.query.quantity} `);
     let _index;
     req.session.currentOrder.products.forEach((element, index) => {
@@ -70,7 +70,7 @@ router.get('/del_product', function (req, res) {
 });
 
 
-router.post('/', function (req, res) {
+router.post('/', function(req, res) {
     let id = req.body.id;
     console.log(req.body);
     let quantity = parseFloat(req.body.quantity);
@@ -169,12 +169,12 @@ router.get('/check-out', (req, res) => {
         let customerMoney = (parseFloat(req.query.money)) ? parseFloat(req.query.money) : 0;
 
         console.log('Cheking out, session object: ', req.session.currentOrder)
-        //Decreasing quantity of all added products
-        //Summing quantity for each product so we will query the db for each product only once. Object structure as follows
-        //  {
-        //      "id1" : <value1>,  
-        //      "id2" : <value2>    
-        //  }
+            //Decreasing quantity of all added products
+            //Summing quantity for each product so we will query the db for each product only once. Object structure as follows
+            //  {
+            //      "id1" : <value1>,  
+            //      "id2" : <value2>    
+            //  }
         let quantityToDecreaseByProduct = {};
         req.session.currentOrder.products.forEach((product) => {
             if (Object.getOwnPropertyNames(quantityToDecreaseByProduct).indexOf(product._id) != -1) {
@@ -208,6 +208,8 @@ router.get('/check-out', (req, res) => {
                     let newTransaction = new Transaction({
                         productId: productID,
                         productName: product.title,
+                        price: product.price,
+                        cost: product.cost,
                         type: "sale",
                         quantity: quantityToDecreaseByProduct[productID],
                         previousQuantity: product.quantity,
@@ -238,7 +240,8 @@ router.get('/check-out', (req, res) => {
                     //saving new dayBalance
                     dayBalance.save((err, db) => {
                         if (err) {
-                            console.log(err); return res.redirect('/');
+                            console.log(err);
+                            return res.redirect('/');
                         } else {
                             //clearing current order
                             req.session.currentOrder = {
@@ -259,7 +262,8 @@ router.get('/check-out', (req, res) => {
                         year: parseInt(date.getFullYear())
                     }, (err, dayBalance) => {
                         if (err) {
-                            console.log(err); return res.redirect('/');
+                            console.log(err);
+                            return res.redirect('/');
                         } else {
                             //checking if day balance with required date has been found
                             if (dayBalance === null) { //means that not found
@@ -276,7 +280,8 @@ router.get('/check-out', (req, res) => {
                                 //saving new dayBalance
                                 dayBalance.save((err, db) => {
                                     if (err) {
-                                        console.log(err); return res.redirect('/');
+                                        console.log(err);
+                                        return res.redirect('/');
                                     } else {
                                         //clearing current order
                                         req.session.currentOrder = {
@@ -292,7 +297,8 @@ router.get('/check-out', (req, res) => {
                                 dayBalance.orders.push(orderSaved.id);
                                 dayBalance.save((err) => {
                                     if (err) {
-                                        console.log(err); return res.redirect('/');
+                                        console.log(err);
+                                        return res.redirect('/');
                                     } else {
                                         //clearing current order
                                         req.session.currentOrder = {
@@ -345,7 +351,7 @@ router.get('/checkout', (req, res) => {
         order.discount = req.session.currentOrder.discount;
         order.discountSum = req.session.currentOrder.discountSum;
         order.products = req.session.currentOrder.products
-        //trying to save changed order
+            //trying to save changed order
         order.save((err) => {
             if (err) {
                 console.warn(err);
@@ -436,5 +442,3 @@ router.get('/print', (req, res) => {
 
 // Exports
 module.exports = router;
-
-

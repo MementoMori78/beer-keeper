@@ -23,10 +23,7 @@ var ProductSchema = mongoose.Schema({
     quantity: {
         type: Number
     },
-    timestamps: {
-        type: Array,
-        default: []
-    }
-});
+    timestamps: [Date]
+}, { usePushEach: true });
 
 var Product = module.exports = mongoose.model('Product', ProductSchema);
