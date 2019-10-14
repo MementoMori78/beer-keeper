@@ -131,6 +131,8 @@ router.post('/write-off', (req, res) => {
             let newTransaction = new Transaction({
                 productId: product._id,
                 productName: product.title,
+                price: product.price,
+                cost: product.cost,
                 type: "write-off",
                 quantity: recievedWriteOffValue,
                 previousQuantity: product.quantity + recievedWriteOffValue,
