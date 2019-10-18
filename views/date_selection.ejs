@@ -1,0 +1,31 @@
+<% include _layouts/header %>
+    <div class="row">
+        <div class="col-12">
+            <h3>Оберіть початкову та кінцеву дату звіту</h3>
+        </div>
+    </div>
+
+    <form action="/sales/report" method="post" autocomplete="off">
+        <div class="row">
+            <div class="form-group col-12">
+                <div class="input-daterange input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Від</span>
+                    </div>
+                    <input type="text" class="form-control" name="start" />
+
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">До</span>
+                    </div>
+                    <input type="text" class="form-control" name="end" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary btn-lg btn-block">Сформувати звіт</button>
+            </div>
+        </div>
+    </form>
+
+    <% include _layouts/footer %>

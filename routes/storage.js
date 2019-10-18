@@ -221,7 +221,7 @@ router.post('/create_product', (req, res) => {
     let newProduct = new Product({
         title: req.body.title,
         price: parseFloat(req.body.price),
-		cost: req.body.cost,
+        cost: req.body.cost,
         category: req.body.category,
         desс: 'desc',
         quantity: 0

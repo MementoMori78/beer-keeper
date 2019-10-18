@@ -86,6 +86,13 @@ $(document).ready(function() {
             [1, "desc"]
         ]
     });
+
+
+
+    $('.input-daterange').datepicker({
+        language: "uk"
+    });
+    console.log('hello')
 });
 
 $('#exampleModal').on('show.bs.modal', function(event) {
