@@ -226,16 +226,17 @@ router.post('/report', (req, res) => {
                     if (index < 0) {
                         byProduct.push({
                             name: transaction.productName,
+                            category: (transaction.productCategory ? transaction.productCategory : "Не вказано"),
                             productId: transaction.productId,
                             replQuantity: transaction.quantity,
-                            replMoney: transaction.quantity * ((transaction.cost) ? transaction.cost : transaction.price),
+                            replMoney: transaction.quantity * (transaction.cost ? transaction.cost : transaction.price),
                             writeMoney: 0,
                             writeQuantity: 0,
                             saleMoney: 0,
                             saleQuantity: 0
                         });
                     } else {
-                        byProduct[index].replMoney += transaction.quantity * ((transaction.cost) ? transaction.cost : transaction.price);
+                        byProduct[index].replMoney += transaction.quantity * (transaction.cost ? transaction.cost : transaction.price);
                         byProduct[index].replQuantity += transaction.quantity;
                     }
                     break;
@@ -243,34 +244,36 @@ router.post('/report', (req, res) => {
                     if (index < 0) {
                         byProduct.push({
                             name: transaction.productName,
+                            category: (transaction.productCategory ? transaction.productCategory : "Не вказано"),
                             productId: transaction.productId,
                             replQuantity: 0,
                             replMoney: 0,
-                            writeMoney: transaction.quantity * ((transaction.cost) ? transaction.cost : transaction.price),
+                            writeMoney: transaction.quantity * (transaction.cost ? transaction.cost : transaction.price),
                             writeQuantity: transaction.quantity,
                             saleMoney: 0,
                             saleQuantity: 0
                         });
                     } else {
-                        byProduct[index].writeMoney += transaction.quantity * ((transaction.cost) ? transaction.cost : transaction.price);
+                        byProduct[index].writeMoney += transaction.quantity * (transaction.cost ? transaction.cost : transaction.price);
                         byProduct[index].writeQuantity += transaction.quantity;
                     }
-                    main.writeOff += transaction.quantity * ((transaction.cost) ? transaction.cost : transaction.price);
+                    main.writeOff += transaction.quantity * (transaction.cost ? transaction.cost : transaction.price);
                     break;
                 case 'sale':
                     if (index < 0) {
                         byProduct.push({
                             name: transaction.productName,
+                            category: (transaction.productCategory ? transaction.productCategory : "Не вказано"),
                             productId: transaction.productId,
                             replQuantity: 0,
                             replMoney: 0,
                             writeMoney: 0,
                             writeQuantity: 0,
-                            saleMoney: transaction.quantity * ((transaction.cost) ? transaction.cost : transaction.price),
+                            saleMoney: transaction.quantity * (transaction.cost ? transaction.cost : transaction.price),
                             saleQuantity: transaction.quantity
                         });
                     } else {
-                        byProduct[index].saleMoney += transaction.quantity * ((transaction.cost) ? transaction.cost : transaction.price);
+                        byProduct[index].saleMoney += transaction.quantity * (transaction.cost ? transaction.cost : transaction.price);
                         byProduct[index].saleQuantity += transaction.quantity;
                     }
                     main.sale += transaction.quantity * ((transaction.cost) ? transaction.cost : transaction.price);
@@ -279,7 +282,13 @@ router.post('/report', (req, res) => {
         });
         console.log(byProduct);
         console.log(main);
-        res.render('date_selection', { navClasses: navClasses });
+        res.render('report', {
+            navClasses: navClasses,
+            start: req.body.start,
+            end: req.body.end,
+            main: main,
+            byProduct: byProduct
+        });
     })
 })
 

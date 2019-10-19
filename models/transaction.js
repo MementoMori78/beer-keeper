@@ -15,6 +15,10 @@ var TransactionSchema = mongoose.Schema({
         type: String,
         required: false
     },
+    productCategory: {
+        type: String,
+        required: false
+    },
     type: {
         type: String, // income, write-off, sale
         required: true

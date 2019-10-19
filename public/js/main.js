@@ -86,7 +86,12 @@ $(document).ready(function() {
             [1, "desc"]
         ]
     });
-
+    $('#report-table-product').DataTable({
+        language: languageUkr,
+        "order": [
+            [7, "desc"]
+        ]
+    });
 
 
     $('.input-daterange').datepicker({

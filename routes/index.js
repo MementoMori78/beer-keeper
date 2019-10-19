@@ -208,6 +208,7 @@ router.get('/check-out', (req, res) => {
                     let newTransaction = new Transaction({
                         productId: productID,
                         productName: product.title,
+                        productCategory: product.category,
                         price: product.price,
                         cost: product.cost,
                         type: "sale",

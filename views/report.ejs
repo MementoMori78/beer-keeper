@@ -1,3 +1,87 @@
 <% include _layouts/header %>
-    
-<% include _layouts/footer %>
+    <div class="row">
+        <div class="col-12">
+            <h3>Звіт з
+                <span class="blue"><%= start %> </span>по
+                <span class="blue"><%= end %></span>
+            </h3>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12">
+            <h3>Загальні дані</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <h5>Виручка:
+                <span class="blue"><%= main.sale %></span> грн.</h4>
+        </div>
+        <div class="col-4">
+            <h5>Списано:
+                <span class="blue"><%= main.writeOff %></span> грн.</h4>
+        </div>
+        <div class="col-4">
+            <h5>Прибуток:
+                <span class="blue"><%= main.revenue %></span> грн.</h4>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12">
+            <h3>По товарам</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-hover table-borderless table-striped" id="report-table-product">
+                <thead>
+                    <tr style="font-size: 0.7em;">
+                        <th>Назва</th>
+                        <th>Категорія</th>
+                        <th>Поповнення кг.</th>
+                        <th>Поповн. грн.</th>
+                        <th>Списання кг.</th>
+                        <th>Спис. грн.</th>
+                        <th>Продаж кг.</th>
+                        <th>Прд. грн.</th>
+                    </tr>
+                </thead>
+                <tbody id="report-tbody-product">
+                    <% byProduct.forEach(function(p){ %>
+                        <tr class="content">
+                            <td scope="row">
+                                <a href="/storage/product?id=<%=p.productId%>">
+                                    <%= p.name %>
+                                </a>
+                            </td>
+                            <td>
+                                <%= p.category %>
+                            </td>
+                            <td>
+                                <%= p.replQuantity.toFixed(2) %>
+                            </td>
+                            <td>
+                                <%= p.replMoney.toFixed(2) %>
+                            </td>
+                            <td>
+                                <%= p.writeQuantity.toFixed(2) %>
+                            </td>
+                            <td>
+                                <%= p.writeMoney.toFixed(2) %>
+                            </td>
+                            <td>
+                                <%= p.saleQuantity.toFixed(2) %>
+                            </td>
+                            <td>
+                                <%= p.saleMoney.toFixed(2) %>
+                            </td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <% include _layouts/footer %>

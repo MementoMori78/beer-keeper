@@ -299,3 +299,7 @@ div.product-control-buttons {
 div.product-control-buttons>.btn-group {
     width: 100%;
 }
+
+span.blue {
+    color: var(--blue);
+}

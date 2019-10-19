@@ -74,6 +74,7 @@ router.post('/replenish', (req, res) => {
             let newTransaction = new Transaction({
                 productId: product._id,
                 productName: product.title,
+                productCategory: product.category,
                 type: "replenishment",
                 quantity: recievedreplenishValue,
                 previousQuantity: product.quantity - recievedreplenishValue,
@@ -131,6 +132,7 @@ router.post('/write-off', (req, res) => {
             let newTransaction = new Transaction({
                 productId: product._id,
                 productName: product.title,
+                productCategory: product.category,
                 price: product.price,
                 cost: product.cost,
                 type: "write-off",
@@ -331,6 +333,7 @@ router.get('/out-of-product', (req, res) => {
             let newTrn = new Transaction({
                 productId: product._id,
                 productName: product.title,
+                productCategory: product.category,
                 type: "out-of-product",
                 quantity: 0,
                 previousQuantity: product.quantity
@@ -384,6 +387,7 @@ router.get('/out-of-product', (req, res) => {
                     let newTrn = new Transaction({
                         productId: product._id,
                         productName: product.title,
+                        productCategory: product.category,
                         type: "out-of-product",
                         quantity: 0,
                         previousQuantity: product.quantity,
