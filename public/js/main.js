@@ -92,6 +92,12 @@ $(document).ready(function() {
             [7, "desc"]
         ]
     });
+    $('#report-table-cycles').DataTable({
+        language: languageUkr,
+        "order": [
+            [5, "desc"]
+        ]
+    });
 
 
     $('.input-daterange').datepicker({

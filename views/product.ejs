@@ -143,11 +143,13 @@
                                                 <span>Товар закінчився</span>
                                                 <div class="divider"></div>
                                                 <% if(transaction.additional){%>
-                                                    <span><%= `+${transaction.additional.replenishTotal.toFixed(2)}`%></span>
+                                                    <span><%= `Поповнено: ${transaction.additional.replenishTotal.toFixed(2)}`%></span>
                                                     <div class="divider"></div>
-                                                    <span><%= transaction.additional.saleTotal.toFixed(2)%></span>
+                                                    <span>Продано: <%= transaction.additional.saleTotal.toFixed(2)%></span>
                                                     <div class="divider"></div>
-                                                    <span><%= transaction.additional.writeOffTotal.toFixed(2)%></span>
+                                                    <span>Списано: <%= transaction.additional.writeOffTotal.toFixed(2)%></span>
+                                                    <div class="divider"></div>
+                                                    <span>Загалом: <%= (transaction.additional.replenishTotal - transaction.additional.saleTotal - transaction.additional.writeOffTotal).toFixed(2)%></span>
                                                     <div class="divider"></div>
                                                     <%}%>
                                                         <span><%= moment(transaction.date).format('DD.MM.YY HH:mm') %>

@@ -24,7 +24,7 @@
         </div>
         <div class="col-4">
             <h5>Прибуток:
-                <span class="blue"><%= main.revenue %></span> грн.</h4>
+                <span class="blue"><%= (main.revenue - main.writeOff).toFixed(2) %></span> грн.</h4>
         </div>
     </div>
     <hr>
@@ -40,12 +40,12 @@
                     <tr style="font-size: 0.7em;">
                         <th>Назва</th>
                         <th>Категорія</th>
-                        <th>Поповнення кг.</th>
-                        <th>Поповн. грн.</th>
-                        <th>Списання кг.</th>
-                        <th>Спис. грн.</th>
-                        <th>Продаж кг.</th>
-                        <th>Прд. грн.</th>
+                        <th>Поповнення</th>
+                        <th>Поповн. сума</th>
+                        <th>Списання</th>
+                        <th>Спис. сума</th>
+                        <th>Реалізовано</th>
+                        <th>Реалізовано сума</th>
                     </tr>
                 </thead>
                 <tbody id="report-tbody-product">
@@ -76,6 +76,54 @@
                             </td>
                             <td>
                                 <%= p.saleMoney.toFixed(2) %>
+                            </td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12">
+            <h3>Цикли реалізації</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-hover table-borderless table-striped" id="report-table-cycles">
+                <thead>
+                    <tr style="font-size: 0.7em;">
+                        <th>Назва</th>
+                        <th>Категорія</th>
+                        <th>Поповнення</th>
+                        <th>Списання</th>
+                        <th>Реалізовано</th>
+                        <th>Загалом</th>
+                    </tr>
+                </thead>
+                <tbody id="report-tbody-product">
+                    <% cycles.forEach(function(p){ %>
+                        <tr class="content">
+                            <td scope="row">
+                                <a href="/storage/product?id=<%=p.productId%>">
+                                    <%= p.name %>
+                                </a>
+                            </td>
+                            <td>
+                                <%= p.category %>
+                            </td>
+                            <td>
+                                <%= p.repl.toFixed(2) %>
+                            </td>
+                            <td>
+                                <%= p.write.toFixed(2) %>
+                            </td>
+                            <td>
+                                <%= p.sale.toFixed(2) %>
+                            </td>
+                            <td>
+                                <%=  (p.repl - p.write - p.sale).toFixed(2) %>
                             </td>
                         </tr>
                         <% }); %>

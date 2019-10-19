@@ -186,7 +186,8 @@ router.get('/delete_order', (req, res) => {
 router.get('/report', (req, res) => {
     let navClasses = {
         'cas': '',
-        'storage': 'active'
+        'storage': '',
+        'buh': 'active',
     }
     res.render('date_selection', { navClasses: navClasses });
 })
@@ -218,9 +219,10 @@ router.post('/report', (req, res) => {
             revenue: 0
         }
         let byProduct = [];
-
+        let cycles = [];
         transactions.forEach((transaction) => {
             let index = findWithAttr(byProduct, 'productId', transaction.productId);
+            let cyclesIndex = findWithAttr(cycles, 'productId', transaction.productId);
             switch (transaction.type) {
                 case 'replenishment':
                     if (index < 0) {
@@ -276,7 +278,26 @@ router.post('/report', (req, res) => {
                         byProduct[index].saleMoney += transaction.quantity * (transaction.cost ? transaction.cost : transaction.price);
                         byProduct[index].saleQuantity += transaction.quantity;
                     }
+                    main.revenue += transaction.quantity * ((transaction.cost) ? (transaction.price - transaction.cost) : (transaction.price * 0.1))
                     main.sale += transaction.quantity * ((transaction.cost) ? transaction.cost : transaction.price);
+                    break;
+                case 'out-of-product':
+                    if (transaction.additional) {
+                        if (cyclesIndex < 0) {
+                            cycles.push({
+                                name: transaction.productName,
+                                category: (transaction.productCategory ? transaction.productCategory : "Не вказано"),
+                                productId: transaction.productId,
+                                repl: transaction.additional.replenishTotal,
+                                write: transaction.additional.writeOffTotal,
+                                sale: transaction.additional.saleTotal
+                            });
+                        } else {
+                            cycles[cyclesIndex].repl += transaction.additional.replenishTotal;
+                            cycles[cyclesIndex].write += transaction.additional.writeOffTotal;
+                            cycles[cyclesIndex].sale += transaction.additional.saleTotal;
+                        }
+                    }
                     break;
             }
         });
@@ -287,7 +308,8 @@ router.post('/report', (req, res) => {
             start: req.body.start,
             end: req.body.end,
             main: main,
-            byProduct: byProduct
+            byProduct: byProduct,
+            cycles: cycles
         });
     })
 })

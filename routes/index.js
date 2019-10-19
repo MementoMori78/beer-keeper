@@ -80,11 +80,7 @@ router.post('/', function(req, res) {
     }
     let mult = 1;
     if (req.body.mult) {
-        if (req.body.mult == 'x2') {
-            mult = 2
-        } else {
-            mult = 3;
-        }
+        mult = req.body.mult;
     }
     console.log(`POST [/] params: id=${id} quantity=${quantity}`);
     Product.findById(id, (err, product) => {
