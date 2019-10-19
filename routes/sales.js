@@ -191,6 +191,7 @@ router.get('/report', (req, res) => {
     }
     res.render('date_selection', { navClasses: navClasses });
 })
+
 router.post('/report', (req, res) => {
     let navClasses = {
         'cas': '',
@@ -201,10 +202,18 @@ router.post('/report', (req, res) => {
         req.flash('error', 'Не обрана початкова або кінцева дата');
         return res.render('date_selection', { navClasses: navClasses });
     }
+    let startDate = moment(req.body.start, "DD.MM.YYYY");
+    let endDate = moment(req.body.end, "DD.MM.YYYY");
+    if (req.body.start == req.body.end) {
+        startDate.hour(0);
+        startDate.minute(0);
+        endDate.hour(23);
+        endDate.minutes(59);
+    }
     Transaction.find({
         date: {
-            $gte: moment(req.body.start, "DD.MM.YYYY"),
-            $lte: moment(req.body.end, "DD.MM.YYYY")
+            $gte: startDate,
+            $lte: endDate
         }
     }, (err, transactions) => {
         if (err) {
