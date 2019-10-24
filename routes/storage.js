@@ -392,6 +392,7 @@ router.get('/out-of-product', (req, res) => {
                         quantity: 0,
                         previousQuantity: product.quantity,
                         additional: {
+                            dateStarted:  product.timestamps[product.timestamps.length - 2], 
                             saleTotal: saleSum,
                             writeOffTotal: writeOffSum,
                             replenishTotal: replenishSum

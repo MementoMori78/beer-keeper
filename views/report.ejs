@@ -100,6 +100,9 @@
                         <th>Списання</th>
                         <th>Реалізовано</th>
                         <th>Загалом</th>
+                        <th>Початок</th>
+                        <th>Кінець</th>
+                        <th>Кільк.</th>
                     </tr>
                 </thead>
                 <tbody id="report-tbody-product">
@@ -124,6 +127,15 @@
                             </td>
                             <td>
                                 <%=  (p.repl - p.write - p.sale).toFixed(2) %>
+                            </td>
+                            <td>
+                                <%= p.dateStarted %>
+                            </td>
+                            <td>
+                                <%=  p.dateEnd %>
+                            </td>
+                            <td>
+                                <%=  p.count %>
                             </td>
                         </tr>
                         <% }); %>

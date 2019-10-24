@@ -299,9 +299,18 @@ router.post('/report', (req, res) => {
                                 productId: transaction.productId,
                                 repl: transaction.additional.replenishTotal,
                                 write: transaction.additional.writeOffTotal,
-                                sale: transaction.additional.saleTotal
+                                sale: transaction.additional.saleTotal,
+                                dateEnd: moment(transaction.date).format('DD.MM.YY'),
+                                count: 1
                             });
+                            if(transaction.additional.dateStarted) {
+                               cycles[cycles.length -1].dateStarted = moment(transaction.additional.dateStarted).format('DD.MM.YY');
+                            } else {
+                                cycles[cycles.length -1].dateStarted = 'До оновлення'; 
+                            }
                         } else {
+                            cycles[cyclesIndex].count++;
+                            cycles[cyclesIndex].dateEnd = moment(transaction.date).format('DD.MM.YY');
                             cycles[cyclesIndex].repl += transaction.additional.replenishTotal;
                             cycles[cyclesIndex].write += transaction.additional.writeOffTotal;
                             cycles[cyclesIndex].sale += transaction.additional.saleTotal;
